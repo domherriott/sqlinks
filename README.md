@@ -1,4 +1,4 @@
-<h1 align="center"> :cyclone: FlowSQL :cyclone: </h1> <br>
+<h1 align="center">flowSQL</h1> <br>
 <p align="center">
   <a href="">
     <img alt="FlowSQL" title="FlowSQL" src="images/logo.png" width="250">
