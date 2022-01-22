@@ -1,7 +1,8 @@
-print('gui loaded')
-import parse
-import draw
+print('Loading gui...')
 import dearpygui.dearpygui as dpg
+import parse
+import populate
+import draw
 
 def button_callback(sender, app_data, user_data):
     print(f"sender is: {sender}")
@@ -9,7 +10,9 @@ def button_callback(sender, app_data, user_data):
     print(f"user_data is: {user_data}")
 
     parse.main(user_data['path'])
+    populate.main()
     draw.main(user_data['output_location'])
+    
 
 
 def main():
