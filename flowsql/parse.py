@@ -133,7 +133,7 @@ def main(path):
                         print('DEBUGGING3', [col])
 
 
-            output_folder = '../working-files'
+            output_folder = 'working-files'
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
 

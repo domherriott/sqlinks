@@ -13,12 +13,14 @@ def create_master_mapping():
         master_mapping = {}
 
         # to be looped over all files
-        for filename in os.listdir('../working-files'):
+        for filename in os.listdir('working-files'):
             if filename[0] == '.':
+                pass
+            elif filename[-4:] == '.pkl':
                 pass
             else:
                 print(filename)
-                with open('../working-files/'+filename) as f:
+                with open('working-files/'+filename) as f:
                     mapping = json.loads(f.read())
 
                 master_mapping.update(mapping)
