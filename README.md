@@ -1,7 +1,7 @@
-<h1 align="center"> FlowSQL </h1> <br>
+<h1 align="center"> :cyclone: FlowSQL :cyclone: </h1> <br>
 <p align="center">
   <a href="">
-    <img alt="FlowSQL" title="FlowSQL" src="https://www.clipartkey.com/mpngs/m/5-56395_transparent-wave-border-png-water-flow-icon.png" width="250">
+    <img alt="FlowSQL" title="FlowSQL" src="images/logo.png" width="250">
   </a>
 </p>
 
@@ -31,13 +31,29 @@ A few of the things you can do with FlowSQL:
 
 ## Example
 
-<p align="center">
-  <img src = "" width=700>
-</p>
+1. Starting with a standard `.sql` file, the first step would be then be to run the module on the command line:
 
-<p align="center">
-  <img src = "" width=700>
-</p>
+    <p align="center">
+    <img src = "images/example-sql.png" width=300>
+    </p>
+
+    <p align="center">
+    <img src = "images/example-terminal.png" width=300>
+    </p>
+
+1. After running the command a GUI window will appear. At this stage enter the path of your `.sql` file. When ready, hit the `Run` button!
+
+    <p align="center">
+    <img src = "images/example-gui.png" width=300>
+    </p>
+
+1. The program will then analyse the SQL code and generate a [diagrams.net](diagrams.net) diagram. It will save this file in the `./output/` folder and also try and open it (although this requires a local version of `draw.io` to be installed).
+
+    <p align="center">
+    <img src = "images/example-diagram.png" width=900>
+    </p>
+
+
 
 
 ## Feedback
