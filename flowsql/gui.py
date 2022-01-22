@@ -17,10 +17,10 @@ def main():
     width, height = 600, 300
 
     dpg.create_context()
-    dpg.create_viewport(title='flowSQL', width=width, height=height)
+    dpg.create_viewport(title='flowsql', width=width, height=height)
 
-    with dpg.window(label="flowSQL", width=width, height=height):
-        dpg.add_text(" Welcome to flowSQL! \
+    with dpg.window(label="flowsql", width=width, height=height):
+        dpg.add_text(" Welcome to flowsql! \
             \n\n Please specify the desired settings and then hit run :)\n\n")
         in_path = dpg.add_input_text(label="Path", default_value="unit-tests/customers.sql")
         in_outputlocation = dpg.add_input_text(label="Output Location", default_value="outputs")

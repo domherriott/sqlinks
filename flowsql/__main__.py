@@ -1,6 +1,5 @@
 import gui
 
-
 print('program started')
 
 print(__name__)

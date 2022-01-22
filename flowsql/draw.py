@@ -62,7 +62,56 @@ def main(output_location):
 
 
     def create_tables(master_mapping, master_all_cols):
-        
+        # tables is the desired end state
+        # tables = [
+        #     {
+        #         'name':'stage.reference_rts',
+        #         'id':3,
+        #         'x':900,
+        #         'cols':[
+        #             {
+        #                 'name':'region',
+        #                 'id':301,
+        #                 'y':26,
+        #                 'links':[]
+        #             },
+        #             {
+        #                 'name':'county',
+        #                 'id':302,
+        #                 'y':52,
+        #                 'links':[{
+        #                         'link_id':900,
+        #                         'parent_id':402
+        #                     }]
+        #             },
+        #             {
+        #                 'name':'indoor_outdoor',
+        #                 'id':303,
+        #                 'y':78,
+        #                 'links':[]
+        #             }
+        #         ]
+        #     },
+        #     {
+        #         'name':'reporting.reference_postcode',
+        #         'id':4,
+        #         'x': 300,
+        #         'cols':[
+        #             {
+        #                 'name':'region_name',
+        #                 'id':401,
+        #                 'y':26,
+        #                 'links':[]
+        #             },
+        #             {
+        #                 'name':'county_name',
+        #                 'id':402,
+        #                 'y':52,
+        #                 'links':[]
+        #             }
+        #         ] 
+        #     }
+        # ]
 
         def create_tables_base():
             global id_counter
@@ -121,6 +170,7 @@ def main(output_location):
             return id_col_lookup
         
 
+
         def populate_links(tables):
             global id_counter
 
@@ -158,99 +208,47 @@ def main(output_location):
 
 
 
+        def order_tables(tables):
+            #order tables and links
+            ordering_dict = {}
+            for table in tables:
+                ordering_dict[table['name']] = {
+                    'number_of_parents':table['number_of_parents'],
+                    'number_of_children':table['number_of_children']
+                }
+
+            # sort by awayPoints, then position; note the lambda uses a tuple
+            order = 0
+            ordering = {}
+            for table in sorted(ordering_dict, key = lambda k: (ordering_dict[k]['number_of_parents'], -ordering_dict[k]['number_of_children'])):
+                ordering[table] = order
+                order += 1
+            
+
+            x_delta = 400
+            y_delta = 200
+            for table in tables:
+                table['x'] = x_delta + (ordering[table['name']] * x_delta)
+                table['y'] = y_delta + ((ordering[table['name']] % 4) * y_delta)
+                print(ordering[table['name']]%4+1)
+
+                for col in table['cols']:
+                    for link in col['links']:
+                        link['mx'] = table['x'] - (link['table_link_number'] * 26)
+                        link['my'] = table['y'] + col['y']
+
+            return tables
+
+
 
         tables = create_tables_base()
         id_col_lookup = create_id_col_lookup(tables)
         row_height = 26
         populate_links(tables)
+        order_tables(tables)
 
-        ordering_dict = {}
-
-        for table in tables:
-            ordering_dict[table['name']] = {
-                'number_of_parents':table['number_of_parents'],
-                'number_of_children':table['number_of_children']
-            }
-
-
-        # sort by awayPoints, then position; note the lambda uses a tuple
-        order = 0
-        ordering = {}
-        for table in sorted(ordering_dict, key = lambda k: (ordering_dict[k]['number_of_parents'], -ordering_dict[k]['number_of_children'])):
-            ordering[table] = order
-            order += 1
-        
-
-        x_delta = 400
-        y_delta = 200
-        for table in tables:
-            table['x'] = x_delta + (ordering[table['name']] * x_delta)
-            table['y'] = y_delta + ((ordering[table['name']] % 4) * y_delta)
-            print(ordering[table['name']]%4+1)
-
-            for col in table['cols']:
-                for link in col['links']:
-                    link['mx'] = table['x'] - (link['table_link_number'] * 26)
-                    link['my'] = table['y'] + col['y']
-
-
-        # print(number_of_parents)
         return tables
 
-    tables = create_tables(master_mapping, master_all_cols)
-    print(tables)
-
-
-    # tables is the desired end state
-    # tables = [
-    #     {
-    #         'name':'stage.reference_rts',
-    #         'id':3,
-    #         'x':900,
-    #         'cols':[
-    #             {
-    #                 'name':'region',
-    #                 'id':301,
-    #                 'y':26,
-    #                 'links':[]
-    #             },
-    #             {
-    #                 'name':'county',
-    #                 'id':302,
-    #                 'y':52,
-    #                 'links':[{
-    #                         'link_id':900,
-    #                         'parent_id':402
-    #                     }]
-    #             },
-    #             {
-    #                 'name':'indoor_outdoor',
-    #                 'id':303,
-    #                 'y':78,
-    #                 'links':[]
-    #             }
-    #         ]
-    #     },
-    #     {
-    #         'name':'reporting.reference_postcode',
-    #         'id':4,
-    #         'x': 300,
-    #         'cols':[
-    #             {
-    #                 'name':'region_name',
-    #                 'id':401,
-    #                 'y':26,
-    #                 'links':[]
-    #             },
-    #             {
-    #                 'name':'county_name',
-    #                 'id':402,
-    #                 'y':52,
-    #                 'links':[]
-    #             }
-    #         ] 
-    #     }
-    # ]
 
 
     def gen_drawing():
@@ -268,25 +266,18 @@ def main(output_location):
         with open(output_filename, 'w+') as f:
             f.write(output)
 
+
+
     def open_drawing(output_filename):
         try:
             os.system("open {}".format(output_filename))
         except:
             print('unable to open .drawio file')
-            
 
+
+
+    tables = create_tables(master_mapping, master_all_cols)
     output = gen_drawing()
     output_filename = output_location + '/output.drawio'
     save_drawing(output, output_filename)
     open_drawing(output_filename)
-
-
-
-    
-        
-    
-
-
-
-
-    
