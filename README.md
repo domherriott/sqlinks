@@ -1,7 +1,7 @@
-<h1 align="center">flowSQL</h1> <br>
+<h1 align="center">flowsql</h1> <br>
 <p align="center">
   <a href="">
-    <img alt="FlowSQL" title="FlowSQL" src="images/logo.png" width="250">
+    <img alt="flowsql" title="flowsql" src="images/logo.png" width="250">
   </a>
 </p>
 
@@ -19,12 +19,12 @@
 
 ## Introduction
 
-Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation becomes out of date as soon as it's completed as there's continuous change. **FlowSQL** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable, clear diagrams, which are built with [diagrams.net](diagrams.net) so are also easily shared and edited.
+Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation becomes out of date as soon as it's completed as there's continuous change. **flowsql** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable, clear diagrams, which are built with [diagrams.net](diagrams.net) so are also easily shared and edited.
 
 
 ## Features
 
-A few of the things you can do with FlowSQL:
+A few of the things you can do with flowsql:
 
 * Generate flow diagrams from `.sql` files
 
@@ -58,7 +58,7 @@ A few of the things you can do with FlowSQL:
 
 ## Feedback
 
-Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/dominic-herriott/) and please use [GitHub Issues](https://github.com/domherriott/flowSQL/issues) for feature requests! :grinning:
+Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/dominic-herriott/) and please use [GitHub Issues](https://github.com/domherriott/flowsql/issues) for feature requests! :grinning:
 
 ## Acknowledgments
 
