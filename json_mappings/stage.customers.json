@@ -1,0 +1,11 @@
+{
+      "stage.customers.id": [
+            "spectrum.customers.id"
+      ],
+      "stage.customers.name": [
+            "spectrum.customers.name"
+      ],
+      "stage.customers.age": [
+            "spectrum.customers.age"
+      ]
+}

@@ -1,0 +1,11 @@
+{
+      "reporting.customers.name": [
+            "stage.customers.name"
+      ],
+      "reporting.customers.age": [
+            "stage.customers.age"
+      ],
+      "reporting.customers.id": [
+            "stage.customers.id"
+      ]
+}

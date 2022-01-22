@@ -1,0 +1,14 @@
+{
+      "stage.customer_sales.total_quantity_sold": [
+            "spectrum.sales.total_quantity_sold"
+      ],
+      "stage.customer_sales.number_of_purchases": [
+            "spectrum.sales.number_of_purchases"
+      ],
+      "stage.customer_sales.total_value_sold": [
+            "spectrum.sales.total_value_sold"
+      ],
+      "stage.customer_sales.customer_id": [
+            "spectrum.sales.customer_id"
+      ]
+}
