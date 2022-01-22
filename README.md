@@ -1,7 +1,7 @@
 <h1 align="center"> FlowSQL </h1> <br>
 <p align="center">
   <a href="">
-    <img alt="FlowSQL" title="FlowSQL" src="https://www.pngitem.com/pimgs/m/221-2212572_water-flow-meter-symbol-hd-png-download.png" width="250">
+    <img alt="FlowSQL" title="FlowSQL" src="https://www.clipartkey.com/mpngs/m/5-56395_transparent-wave-border-png-water-flow-icon.png" width="250">
   </a>
 </p>
 
@@ -32,11 +32,11 @@ A few of the things you can do with FlowSQL:
 ## Example
 
 <p align="center">
-  <img src = "http://i.imgur.com/IkSnFRL.png" width=700>
+  <img src = "" width=700>
 </p>
 
 <p align="center">
-  <img src = "http://i.imgur.com/0iorG20.png" width=700>
+  <img src = "" width=700>
 </p>
 
 
