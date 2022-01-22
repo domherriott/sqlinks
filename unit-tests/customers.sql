@@ -18,7 +18,6 @@ SELECT
 FROM stage.customers c;
 
 
-
 DROP TABLE IF EXISTS stage.customer_sales;
 
 CREATE TABLE stage.customer_sales AS
