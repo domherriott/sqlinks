@@ -24,8 +24,6 @@ Documenting data pipelines is hard. Not only is it complex, but it's also time c
 
 ## Features
 
-A few of the things you can do with flowsql:
-
 * Generate flow diagrams from `.sql` files
 
 
