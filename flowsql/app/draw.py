@@ -3,10 +3,10 @@ from jinja2 import Environment, FileSystemLoader
 import os
 
 def gen_drawing(tables):
-    file_loader = FileSystemLoader('flowsql/templates')
+    file_loader = FileSystemLoader('flowsql/app/templates')
     env = Environment(loader=file_loader)
 
-    template = env.get_template('drawio_template.xml')
+    template = env.get_template('drawio_template_2.xml')
 
     output = template.render(tables=tables)
     return output
