@@ -1,12 +1,9 @@
+<mxGraphModel dx="1106" dy="821" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
 
+    <root>
+        <mxCell id="0"/>
 
-<mxfile host="65bd71144e">
-    <diagram id="LEPaZYdOkPVGhDPzNFSh" name="Page-1">
-        <mxGraphModel dx="242" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
-            <root>
-                <mxCell id="0"/>
-                <mxCell id="1" parent="0"/>
-
+        <mxCell id="1" parent="0"/>
                 {% for table in tables -%}
                     <mxCell id="{{ table.id }}" value="{{ table.name }}" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
                         <mxGeometry x="{{ table.x }}" y="{{ table.y }}" width="{{ table.width }}" height="{{ table.height }}" as="geometry"/>
@@ -37,5 +34,3 @@
 
             </root>
         </mxGraphModel>
-    </diagram>
-</mxfile>
