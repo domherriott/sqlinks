@@ -4,3 +4,4 @@ tests/__pycache__
 working-files/
 *.dtmp
 *.DS_Store
+*.pyc
