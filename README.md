@@ -63,3 +63,9 @@ Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/dominic-herriot
 Thanks to all those who have contributed and helped build the packages this is built on.
 
 Special thanks to the developers at [diagrams.net](diagrams.net)!
+
+
+## Deflation
+https://drawio-app.com/extracting-the-xml-from-mxfiles/
+
+https://jgraph.github.io/drawio-tools/tools/convert.html

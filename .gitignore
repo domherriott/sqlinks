@@ -1,3 +1,7 @@
 flowsql/__pycache__
+flowsql/app/__pycache__
+tests/__pycache__
 working-files/
 *.dtmp
+*.DS_Store
+*.pyc
