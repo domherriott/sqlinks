@@ -3,5 +3,5 @@ working-files/
 *.dtmp
 *.DS_Store
 *.pyc
-*.bkp
+*.drawio.bkp
 .vscode/
