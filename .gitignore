@@ -4,4 +4,4 @@ working-files/
 *.DS_Store
 *.pyc
 *.bkp
-.vscode/*
+.vscode/
