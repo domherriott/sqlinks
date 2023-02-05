@@ -1,6 +1,7 @@
 import pickle
 from jinja2 import Environment, FileSystemLoader
 import os
+import logging
 
 
 def gen_drawing(tables):
@@ -18,24 +19,15 @@ def save_drawing(output, output_filename):
         f.write(output)
 
 
-def open_drawing(output_filename):
-    try:
-        os.system("open {}".format(output_filename))
-    except:
-        print("unable to open .drawio file")
-
-
-def main(output_location):
+def main(output_filename):
 
     # reload object from file
     with open(r"./working-files/tables.pkl", "rb") as f:
         tables = pickle.load(f)
 
-    print(tables)
+    logging.debug(tables)
 
     output = gen_drawing(tables)
-    output_filename = output_location + "/output.drawio"
-    print(output_filename)
+    logging.debug(output_filename)
 
     save_drawing(output, output_filename)
-    open_drawing(output_filename)

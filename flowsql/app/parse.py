@@ -2,8 +2,7 @@ import sqlparse
 from sql_metadata import Parser
 import json
 import os
-
-print("parse loaded")
+import logging
 
 
 def main(path):
@@ -27,19 +26,14 @@ def main(path):
             split = str(stat).replace("\n", " ").split(" ")
             split = list(filter(None, split))
 
-            print(split)
             res_list = [i for i, value in enumerate(split) if value == "FROM"]
             if len(res_list) != 0:
                 source_table = split[res_list[-1] + 1]
-                print("SOURCE TABLE:", source_table, "\n")
+                logging.debug(f"SOURCE TABLE: {source_table}")
 
-            print("TARGET TABLE:", target_table, "\n")
+            logging.debug(f"TARGET TABLE: {target_table}")
 
-            # print('\n'*3, stat, '\n')
             p = Parser(str(stat))
-            # print('Columns', p.columns_dict, '\n')
-            # print('Aliases', p.columns_aliases, '\n')
-            # print('Tables', p.tables, '\n')
 
             # All the alias cols
             # Therefore those that are additional (so completely new)
@@ -47,7 +41,7 @@ def main(path):
             if p.columns_aliases_dict != None:
                 for alias in p.columns_aliases_dict["select"]:
                     alias_cols.append(alias)
-                print("ALIAS COLS:", alias_cols, "\n")
+                logging.debug(f"ALIAS COLS: {alias_cols}")
 
             # All the source cols
             # Therefore all of these should be in the target table
@@ -55,7 +49,7 @@ def main(path):
             source_cols = []
             for source_col in p.columns_dict["select"]:
                 source_cols.append(source_col)
-            print("SOURCE COLS:", source_cols, "\n")
+            logging.debug(f"SOURCE COLS: {source_cols}")
 
             # All the source cols that are used to create an alias
             # Therefore these should not be in the target table
@@ -63,7 +57,6 @@ def main(path):
             # an alias AND be in the target table)
             source_cols_for_alias = []
             for alias in p.columns_aliases:
-                # print(alias, p.columns_aliases[alias], type(p.columns_aliases[alias]))
                 # p.columns_aliases[alias] is either string or "UniqueList" class
                 # depending on if there are multiple source columns
                 if isinstance(p.columns_aliases[alias], str):
@@ -71,7 +64,7 @@ def main(path):
                 else:
                     for source_col in p.columns_aliases[alias]:
                         source_cols_for_alias.append(source_col)
-            print("SOURCE COLS FOR ALIAS:", source_cols_for_alias, "\n")
+            logging.debug(f"SOURCE COLS FOR ALIAS: {source_cols_for_alias}")
 
             # Target cols is all the cols in source, minus the ones used to
             # create an alias (this logic needs work!)
@@ -88,27 +81,20 @@ def main(path):
             for col in source_cols_for_alias:
                 col_name = col.split(".")[-1]
                 for line in str(stat).split("\n"):
-                    # print(line)
                     if col_name in line:
                         split_line = line.replace(".", " ").replace(",", "").split(" ")
-                        # print(col_name, split_line)
                         res_list = [
                             i for i, value in enumerate(split_line) if value == col_name
                         ]
 
                         if len(res_list) != 0:
-                            # print(col_name, split_line)
-                            # print(res_list[-1])
-                            # print(split_line, res_list[-1], len(split_line)-1)
-
                             if res_list[-1] == len(split_line) - 1:
                                 target_cols.append(col)
 
             cols = {}
 
-            print("P COLUMNS ALIASES:", p.columns_aliases, "\n")
-
-            print("TARGET COLS:", target_cols, "\n")
+            logging.debug(f"P COLUMNS ALIASES: {p.columns_aliases}")
+            logging.debug(f"TARGET COLS: {target_cols}")
 
             for col in target_cols:
                 if col in p.columns_aliases:
@@ -125,11 +111,9 @@ def main(path):
                     if "." not in col:
                         source_col_name = source_table + "." + col
                         cols[target_col_name] = [source_col_name]
-                        print("DEBUGGING2", [source_col_name])
 
                     else:
                         cols[target_col_name] = [col]
-                        print("DEBUGGING3", [col])
 
             output_folder = "working-files"
             if not os.path.exists(output_folder):

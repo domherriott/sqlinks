@@ -1,6 +1,7 @@
 import json
 import os
 import pickle
+import logging
 
 starting_counter = 100
 id_counter = starting_counter + 1
@@ -19,7 +20,7 @@ def create_master_mapping():
         elif filename[-4:] == ".pkl":
             pass
         else:
-            print(filename)
+            logging.debug(filename)
             with open("working-files/" + filename) as f:
                 mapping = json.loads(f.read())
 
@@ -134,7 +135,6 @@ def create_tables(master_mapping, master_all_cols):
             col_counter = 1
 
             for col in master_all_cols[table]:
-                # print(col)
 
                 cols.append(
                     {
@@ -190,9 +190,7 @@ def create_tables(master_mapping, master_all_cols):
 
                         for table2 in tables:
                             for col2 in table2["cols"]:
-                                # print(col2['id'])
                                 if col2["id"] == id_col_lookup[parent_col]:
-                                    # print('child')
                                     table2["number_of_children"] += 1
                                 else:
                                     pass
@@ -225,7 +223,7 @@ def create_tables(master_mapping, master_all_cols):
         for table in tables:
             table["x"] = x_delta + (ordering[table["name"]] * x_delta)
             table["y"] = y_delta + ((ordering[table["name"]] % 4) * y_delta)
-            print(ordering[table["name"]] % 4 + 1)
+            logging.debug(ordering[table["name"]] % 4 + 1)
 
             for col in table["cols"]:
                 for link in col["links"]:
