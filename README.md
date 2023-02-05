@@ -64,6 +64,9 @@ Thanks to all those who have contributed and helped build the packages this is b
 
 Special thanks to the developers at [diagrams.net](diagrams.net)!
 
+## Dev
+run `pre-commit install` to set up the git hook scripts
+
 
 ## Deflation
 https://drawio-app.com/extracting-the-xml-from-mxfiles/
