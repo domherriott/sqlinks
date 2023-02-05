@@ -2,6 +2,7 @@ import json
 import os
 import pickle
 import logging
+from pathlib import Path
 
 starting_counter = 100
 id_counter = starting_counter + 1
@@ -9,19 +10,19 @@ table_counter = 1
 x_delta = 300
 
 
-def create_master_mapping():
+def create_master_mapping(working_dir: Path):
 
     master_mapping = {}
 
     # to be looped over all files
-    for filename in os.listdir("working-files"):
+    for filename in os.listdir(working_dir):
         if filename[0] == ".":
             pass
         elif filename[-4:] == ".pkl":
             pass
         else:
             logging.debug(filename)
-            with open("working-files/" + filename) as f:
+            with open(working_dir / filename) as f:
                 mapping = json.loads(f.read())
 
             master_mapping.update(mapping)
@@ -205,7 +206,7 @@ def create_tables(master_mapping, master_all_cols):
                 "number_of_children": table["number_of_children"],
             }
 
-        # sort by awayPoints, then position; note the lambda uses a tuple
+        # sort by no. parents, then no. children; note the lambda uses a tuple
         order = 0
         ordering = {}
         for table in sorted(
@@ -241,11 +242,11 @@ def create_tables(master_mapping, master_all_cols):
     return tables
 
 
-def main():
+def main(working_dir: Path):
     # Dicitonary of all target columns with a list of source columns
-    master_mapping = create_master_mapping()
+    master_mapping = create_master_mapping(working_dir=working_dir)
     master_all_cols = create_master_all_cols(master_mapping)
     tables = create_tables(master_mapping, master_all_cols)
 
-    with open(r"./working-files/tables.pkl", "wb") as f:
+    with open(working_dir / "tables.pkl", "wb") as f:
         pickle.dump(tables, f)
