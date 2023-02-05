@@ -12,7 +12,7 @@ FROM spectrum.sales s;
 DROP TABLE IF EXISTS reporting.customer_sales;
 
 CREATE TABLE reporting.customer_sales AS
-SELECT 
+SELECT
     c.name,
     c.age,
     s.total_quantity_sold,
