@@ -5,9 +5,29 @@ repos:
     rev: v2.3.0
     hooks:
     -   id: check-yaml
+        exclude: ^docs/
     -   id: end-of-file-fixer
+        exclude: ^docs/
     -   id: trailing-whitespace
+        exclude: ^docs/
+
 -   repo: https://github.com/psf/black
     rev: 22.10.0
     hooks:
     -   id: black
+        exclude: ^docs/
+
+-   repo: https://github.com/pycqa/pydocstyle
+    rev: 6.1.1
+    hooks:
+    -   id: pydocstyle
+        args:
+        - --ignore=D107,D202,D204,D205,D213,D400,D406,D407,D413,D415
+        exclude: ^docs/
+
+- repo: local
+  hooks:
+      - id: pdoc
+        name: pdoc
+        language: system
+        entry: bash -c 'pdoc --html -f --output-dir docs flowsql'
