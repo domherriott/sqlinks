@@ -30,4 +30,4 @@ repos:
       - id: pdoc
         name: pdoc
         language: system
-        entry: bash -c 'pdoc --html -f --output-dir docs flowsql'
+        entry: bash -c 'pdoc flowsql --html -f --output-dir docs'
