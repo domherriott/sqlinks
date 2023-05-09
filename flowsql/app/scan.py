@@ -13,6 +13,11 @@ def main(path):
             if name.lower().endswith("sql"):
                 relative_path = os.path.join(dirpath, name)
                 absolute_path = os.path.abspath(relative_path)
-                paths.append(Path(absolute_path))
+                paths.append(
+                    {
+                        "absolute_path": Path(absolute_path),
+                        "relative_path": Path(relative_path),
+                    }
+                )
 
     return paths

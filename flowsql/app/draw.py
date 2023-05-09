@@ -1,7 +1,6 @@
 """draw.py."""
 import pickle
 from jinja2 import Environment, FileSystemLoader
-import os
 import logging
 from pathlib import Path
 
@@ -33,17 +32,6 @@ def save_drawing(output, output_filename):
         f.write(output)
 
 
-def open_drawing(output_filename):
-    """_summary_
-    Args:
-        output_filename (_type_): _description_
-    """
-    try:
-        os.system("open {}".format(output_filename))
-    except:
-        logging.error("Unable to open .drawio file")
-
-
 def save_drawing(output, output_filename):
     """_summary_
 
@@ -73,4 +61,3 @@ def main(working_dir: Path, output_filename: Path):
     logging.debug(output_filename)
 
     save_drawing(output, output_filename)
-    open_drawing(output_filename)
