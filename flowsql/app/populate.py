@@ -242,9 +242,9 @@ def create_tables(master_mapping, master_all_cols):
     return tables
 
 
-def main(working_dir: Path):
-    # Dicitonary of all target columns with a list of source columns
-    master_mapping = create_master_mapping(working_dir=working_dir)
+def main(collection):
+
+    # master_mapping = create_master_mapping(working_dir=working_dir)
     master_all_cols = create_master_all_cols(master_mapping)
     tables = create_tables(master_mapping, master_all_cols)
 

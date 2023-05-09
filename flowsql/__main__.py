@@ -91,11 +91,14 @@ if __name__ == "__main__":
     for i in range(0, len(paths)):
         path = paths[i]
         print(f"Processing file {i+1} of {len(paths)}: {path['relative_path']}")
-        parse.main(path["absolute_path"])
+        collection = parse.main(path["absolute_path"])
+
+        print("CURRENTLY CAN ONLY HANDLE ONE FILE")
+        break
 
     print("Generating diagram...")
 
-    populate.main(working_dir=working_dir)
+    populate.main(collection=collection)
 
     draw.main(output_filename=output_filename, working_dir=working_dir)
 

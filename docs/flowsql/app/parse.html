@@ -44,27 +44,27 @@ class ObjectCollection:
         self._column_lookup = {}
         self._links = []
 
-    def add_schema(self, name: str):
-        print(name, self._schema_lookup)
-        if name in self._schema_lookup:
+    def add_schema(self, full_name: str):
+        print(full_name, self._schema_lookup)
+        if full_name in self._schema_lookup:
             return
-        new_schema = Schema(name=name)
+        new_schema = Schema(full_name=full_name)
         self._schemas.append(new_schema)
-        self._schema_lookup[new_schema.name] = new_schema.id
+        self._schema_lookup[new_schema.full_name] = new_schema.id
 
-    def add_table(self, name: str, schema_id: int):
-        if name in self._table_lookup:
+    def add_table(self, full_name: str, schema_id: int):
+        if full_name in self._table_lookup:
             return
-        new_table = Table(name=name, schema_id=schema_id)
+        new_table = Table(full_name=full_name, schema_id=schema_id)
         self._tables.append(new_table)
-        self._table_lookup[new_table.name] = new_table.id
+        self._table_lookup[new_table.full_name] = new_table.id
 
-    def add_column(self, name: str, table_id: int):
-        if name in self._column_lookup:
+    def add_column(self, full_name: str, table_id: int):
+        if full_name in self._column_lookup:
             return
-        new_column = Column(name=name, table_id=table_id)
+        new_column = Column(full_name=full_name, table_id=table_id)
         self._columns.append(new_column)
-        self._column_lookup[new_column.name] = new_column.id
+        self._column_lookup[new_column.full_name] = new_column.id
 
     def add_link(self, source_col_id: int, target_col_id: int):
         new_link = Link(source_col_id=source_col_id, target_col_id=target_col_id)
@@ -74,33 +74,35 @@ class ObjectCollection:
 class Object:
     object_counter = 1
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, full_name):
+        self.full_name = full_name
         self.id = Object.object_counter
         Object.object_counter += 1
 
 
 class Schema(Object):
-    def __init__(self, name: str):
-        Object.__init__(self, name)
-        self.name = name
+    def __init__(self, full_name: str):
+        Object.__init__(self, full_name)
+        self.full_name = full_name
 
 
 class Table(Object):
-    def __init__(self, name: str, schema_id: str):
-        Object.__init__(self, name)
+    def __init__(self, full_name: str, schema_id: str):
+        Object.__init__(self, full_name)
         self.schema_id = schema_id
+        self.name = full_name.split(&#34;.&#34;)[1]
 
 
 class Column(Object):
-    def __init__(self, name: str, table_id: str):
-        Object.__init__(self, name)
+    def __init__(self, full_name: str, table_id: str):
+        Object.__init__(self, full_name)
         self.table_id = table_id
+        self.name = full_name.split(&#34;.&#34;)[2]
 
 
 class Link(Object):
     def __init__(self, source_col_id: int, target_col_id: int):
-        Object.__init__(self, name=None)
+        Object.__init__(self, full_name=None)
         self.source_id = source_col_id
         self.target_id = target_col_id
 
@@ -199,13 +201,18 @@ def parse_create_statement(collection: ObjectCollection, statement):
 
     for col in all_cols:
         schema, table = col.split(&#34;.&#34;)[:2]
-        collection.add_schema(name=schema)
 
-        schema_id = collection._schema_lookup[schema]
-        collection.add_table(name=table, schema_id=schema_id)
+        full_schema_name = schema
+        full_table_name = &#34;.&#34;.join([schema, table])
+        full_column_name = col
 
-        table_id = collection._table_lookup[table]
-        collection.add_column(name=col, table_id=table_id)
+        collection.add_schema(full_name=full_schema_name)
+
+        schema_id = collection._schema_lookup[full_schema_name]
+        collection.add_table(full_name=full_table_name, schema_id=schema_id)
+
+        table_id = collection._table_lookup[full_table_name]
+        collection.add_column(full_name=full_column_name, table_id=table_id)
 
     for link in links:
         source_col_id = collection._column_lookup[link[0]]
@@ -261,6 +268,8 @@ def main(path):
     statements = sqlparse.parse(raw)
 
     collection = create_collection(statements=statements)
+
+    return collection
 
     # output_folder = &#34;working-files&#34;
     # if not os.path.exists(output_folder):
@@ -320,6 +329,8 @@ def main(path):
     statements = sqlparse.parse(raw)
 
     collection = create_collection(statements=statements)
+
+    return collection
 
     # output_folder = &#34;working-files&#34;
     # if not os.path.exists(output_folder):
@@ -432,13 +443,18 @@ def main(path):
 
     for col in all_cols:
         schema, table = col.split(&#34;.&#34;)[:2]
-        collection.add_schema(name=schema)
 
-        schema_id = collection._schema_lookup[schema]
-        collection.add_table(name=table, schema_id=schema_id)
+        full_schema_name = schema
+        full_table_name = &#34;.&#34;.join([schema, table])
+        full_column_name = col
 
-        table_id = collection._table_lookup[table]
-        collection.add_column(name=col, table_id=table_id)
+        collection.add_schema(full_name=full_schema_name)
+
+        schema_id = collection._schema_lookup[full_schema_name]
+        collection.add_table(full_name=full_table_name, schema_id=schema_id)
+
+        table_id = collection._table_lookup[full_table_name]
+        collection.add_column(full_name=full_column_name, table_id=table_id)
 
     for link in links:
         source_col_id = collection._column_lookup[link[0]]
@@ -456,7 +472,7 @@ def main(path):
 <dl>
 <dt id="flowsql.app.parse.Column"><code class="flex name class">
 <span>class <span class="ident">Column</span></span>
-<span>(</span><span>name: str, table_id: str)</span>
+<span>(</span><span>full_name: str, table_id: str)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -465,9 +481,10 @@ def main(path):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Column(Object):
-    def __init__(self, name: str, table_id: str):
-        Object.__init__(self, name)
-        self.table_id = table_id</code></pre>
+    def __init__(self, full_name: str, table_id: str):
+        Object.__init__(self, full_name)
+        self.table_id = table_id
+        self.name = full_name.split(&#34;.&#34;)[2]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -486,7 +503,7 @@ def main(path):
 </summary>
 <pre><code class="python">class Link(Object):
     def __init__(self, source_col_id: int, target_col_id: int):
-        Object.__init__(self, name=None)
+        Object.__init__(self, full_name=None)
         self.source_id = source_col_id
         self.target_id = target_col_id</code></pre>
 </details>
@@ -497,7 +514,7 @@ def main(path):
 </dd>
 <dt id="flowsql.app.parse.Object"><code class="flex name class">
 <span>class <span class="ident">Object</span></span>
-<span>(</span><span>name)</span>
+<span>(</span><span>full_name)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -508,8 +525,8 @@ def main(path):
 <pre><code class="python">class Object:
     object_counter = 1
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, full_name):
+        self.full_name = full_name
         self.id = Object.object_counter
         Object.object_counter += 1</code></pre>
 </details>
@@ -547,27 +564,27 @@ def main(path):
         self._column_lookup = {}
         self._links = []
 
-    def add_schema(self, name: str):
-        print(name, self._schema_lookup)
-        if name in self._schema_lookup:
+    def add_schema(self, full_name: str):
+        print(full_name, self._schema_lookup)
+        if full_name in self._schema_lookup:
             return
-        new_schema = Schema(name=name)
+        new_schema = Schema(full_name=full_name)
         self._schemas.append(new_schema)
-        self._schema_lookup[new_schema.name] = new_schema.id
+        self._schema_lookup[new_schema.full_name] = new_schema.id
 
-    def add_table(self, name: str, schema_id: int):
-        if name in self._table_lookup:
+    def add_table(self, full_name: str, schema_id: int):
+        if full_name in self._table_lookup:
             return
-        new_table = Table(name=name, schema_id=schema_id)
+        new_table = Table(full_name=full_name, schema_id=schema_id)
         self._tables.append(new_table)
-        self._table_lookup[new_table.name] = new_table.id
+        self._table_lookup[new_table.full_name] = new_table.id
 
-    def add_column(self, name: str, table_id: int):
-        if name in self._column_lookup:
+    def add_column(self, full_name: str, table_id: int):
+        if full_name in self._column_lookup:
             return
-        new_column = Column(name=name, table_id=table_id)
+        new_column = Column(full_name=full_name, table_id=table_id)
         self._columns.append(new_column)
-        self._column_lookup[new_column.name] = new_column.id
+        self._column_lookup[new_column.full_name] = new_column.id
 
     def add_link(self, source_col_id: int, target_col_id: int):
         new_link = Link(source_col_id=source_col_id, target_col_id=target_col_id)
@@ -576,7 +593,7 @@ def main(path):
 <h3>Methods</h3>
 <dl>
 <dt id="flowsql.app.parse.ObjectCollection.add_column"><code class="name flex">
-<span>def <span class="ident">add_column</span></span>(<span>self, name: str, table_id: int)</span>
+<span>def <span class="ident">add_column</span></span>(<span>self, full_name: str, table_id: int)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -584,12 +601,12 @@ def main(path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_column(self, name: str, table_id: int):
-    if name in self._column_lookup:
+<pre><code class="python">def add_column(self, full_name: str, table_id: int):
+    if full_name in self._column_lookup:
         return
-    new_column = Column(name=name, table_id=table_id)
+    new_column = Column(full_name=full_name, table_id=table_id)
     self._columns.append(new_column)
-    self._column_lookup[new_column.name] = new_column.id</code></pre>
+    self._column_lookup[new_column.full_name] = new_column.id</code></pre>
 </details>
 </dd>
 <dt id="flowsql.app.parse.ObjectCollection.add_link"><code class="name flex">
@@ -607,7 +624,7 @@ def main(path):
 </details>
 </dd>
 <dt id="flowsql.app.parse.ObjectCollection.add_schema"><code class="name flex">
-<span>def <span class="ident">add_schema</span></span>(<span>self, name: str)</span>
+<span>def <span class="ident">add_schema</span></span>(<span>self, full_name: str)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -615,17 +632,17 @@ def main(path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_schema(self, name: str):
-    print(name, self._schema_lookup)
-    if name in self._schema_lookup:
+<pre><code class="python">def add_schema(self, full_name: str):
+    print(full_name, self._schema_lookup)
+    if full_name in self._schema_lookup:
         return
-    new_schema = Schema(name=name)
+    new_schema = Schema(full_name=full_name)
     self._schemas.append(new_schema)
-    self._schema_lookup[new_schema.name] = new_schema.id</code></pre>
+    self._schema_lookup[new_schema.full_name] = new_schema.id</code></pre>
 </details>
 </dd>
 <dt id="flowsql.app.parse.ObjectCollection.add_table"><code class="name flex">
-<span>def <span class="ident">add_table</span></span>(<span>self, name: str, schema_id: int)</span>
+<span>def <span class="ident">add_table</span></span>(<span>self, full_name: str, schema_id: int)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -633,19 +650,19 @@ def main(path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_table(self, name: str, schema_id: int):
-    if name in self._table_lookup:
+<pre><code class="python">def add_table(self, full_name: str, schema_id: int):
+    if full_name in self._table_lookup:
         return
-    new_table = Table(name=name, schema_id=schema_id)
+    new_table = Table(full_name=full_name, schema_id=schema_id)
     self._tables.append(new_table)
-    self._table_lookup[new_table.name] = new_table.id</code></pre>
+    self._table_lookup[new_table.full_name] = new_table.id</code></pre>
 </details>
 </dd>
 </dl>
 </dd>
 <dt id="flowsql.app.parse.Schema"><code class="flex name class">
 <span>class <span class="ident">Schema</span></span>
-<span>(</span><span>name: str)</span>
+<span>(</span><span>full_name: str)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -654,9 +671,9 @@ def main(path):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Schema(Object):
-    def __init__(self, name: str):
-        Object.__init__(self, name)
-        self.name = name</code></pre>
+    def __init__(self, full_name: str):
+        Object.__init__(self, full_name)
+        self.full_name = full_name</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -665,7 +682,7 @@ def main(path):
 </dd>
 <dt id="flowsql.app.parse.Table"><code class="flex name class">
 <span>class <span class="ident">Table</span></span>
-<span>(</span><span>name: str, schema_id: str)</span>
+<span>(</span><span>full_name: str, schema_id: str)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -674,9 +691,10 @@ def main(path):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Table(Object):
-    def __init__(self, name: str, schema_id: str):
-        Object.__init__(self, name)
-        self.schema_id = schema_id</code></pre>
+    def __init__(self, full_name: str, schema_id: str):
+        Object.__init__(self, full_name)
+        self.schema_id = schema_id
+        self.name = full_name.split(&#34;.&#34;)[1]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
