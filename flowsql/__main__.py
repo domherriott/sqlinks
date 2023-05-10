@@ -3,6 +3,8 @@ import logging
 import os
 from pathlib import Path
 
+from flowsql.app.Objects import ObjectCollection
+
 import flowsql.app.parse as parse
 import flowsql.app.populate as populate
 import flowsql.app.draw as draw
@@ -88,19 +90,22 @@ if __name__ == "__main__":
 
     paths = scan.main(args.path)
 
+    # Instantiate empty ObjectCollection
+    collection = ObjectCollection()
+
     for i in range(0, len(paths)):
         path = paths[i]
         print(f"Processing file {i+1} of {len(paths)}: {path['relative_path']}")
-        collection = parse.main(path["absolute_path"])
+        collection = parse.main(collection=collection, path=path["absolute_path"])
 
-        print("CURRENTLY CAN ONLY HANDLE ONE FILE")
-        break
+    collection.print_details()
+    collection.create_snapshot()
 
     print("Generating diagram...")
 
-    populate.main(collection=collection)
+    # populate.main(collection=collection)
 
-    draw.main(output_filename=output_filename, working_dir=working_dir)
+    draw.main(output_filename=output_filename, collection=collection)
 
     cleanup(working_dir=working_dir)
 

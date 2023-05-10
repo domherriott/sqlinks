@@ -33,78 +33,7 @@ import os
 import logging
 import itertools
 
-
-class ObjectCollection:
-    def __init__(self):
-        self._schemas = []
-        self._schema_lookup = {}
-        self._tables = []
-        self._table_lookup = {}
-        self._columns = []
-        self._column_lookup = {}
-        self._links = []
-
-    def add_schema(self, full_name: str):
-        print(full_name, self._schema_lookup)
-        if full_name in self._schema_lookup:
-            return
-        new_schema = Schema(full_name=full_name)
-        self._schemas.append(new_schema)
-        self._schema_lookup[new_schema.full_name] = new_schema.id
-
-    def add_table(self, full_name: str, schema_id: int):
-        if full_name in self._table_lookup:
-            return
-        new_table = Table(full_name=full_name, schema_id=schema_id)
-        self._tables.append(new_table)
-        self._table_lookup[new_table.full_name] = new_table.id
-
-    def add_column(self, full_name: str, table_id: int):
-        if full_name in self._column_lookup:
-            return
-        new_column = Column(full_name=full_name, table_id=table_id)
-        self._columns.append(new_column)
-        self._column_lookup[new_column.full_name] = new_column.id
-
-    def add_link(self, source_col_id: int, target_col_id: int):
-        new_link = Link(source_col_id=source_col_id, target_col_id=target_col_id)
-        self._links.append(new_link)
-
-
-class Object:
-    object_counter = 1
-
-    def __init__(self, full_name):
-        self.full_name = full_name
-        self.id = Object.object_counter
-        Object.object_counter += 1
-
-
-class Schema(Object):
-    def __init__(self, full_name: str):
-        Object.__init__(self, full_name)
-        self.full_name = full_name
-
-
-class Table(Object):
-    def __init__(self, full_name: str, schema_id: str):
-        Object.__init__(self, full_name)
-        self.schema_id = schema_id
-        self.name = full_name.split(&#34;.&#34;)[1]
-
-
-class Column(Object):
-    def __init__(self, full_name: str, table_id: str):
-        Object.__init__(self, full_name)
-        self.table_id = table_id
-        self.name = full_name.split(&#34;.&#34;)[2]
-
-
-class Link(Object):
-    def __init__(self, source_col_id: int, target_col_id: int):
-        Object.__init__(self, full_name=None)
-        self.source_id = source_col_id
-        self.target_id = target_col_id
+from flowsql.app.Objects import ObjectCollection
 
 
 def parse_create_statement(collection: ObjectCollection, statement):
@@ -202,23 +131,23 @@ def parse_create_statement(collection: ObjectCollection, statement):
     for col in all_cols:
         schema, table = col.split(&#34;.&#34;)[:2]
 
-        full_schema_name = schema
-        full_table_name = &#34;.&#34;.join([schema, table])
-        full_column_name = col
+        schema_sid = schema
+        table_sid = &#34;.&#34;.join([schema, table])
+        column_sid = col
 
-        collection.add_schema(full_name=full_schema_name)
+        collection.add_schema(sid=schema_sid)
 
-        schema_id = collection._schema_lookup[full_schema_name]
-        collection.add_table(full_name=full_table_name, schema_id=schema_id)
+        collection.add_table(sid=table_sid, schema_sid=schema_sid)
 
-        table_id = collection._table_lookup[full_table_name]
-        collection.add_column(full_name=full_column_name, table_id=table_id)
+        collection.add_column(sid=column_sid, table_sid=table_sid)
 
     for link in links:
-        source_col_id = collection._column_lookup[link[0]]
-        target_col_id = collection._column_lookup[link[1]]
+        source_col_sid = link[0]
+        target_col_sid = link[1]
 
-        collection.add_link(source_col_id=source_col_id, target_col_id=target_col_id)
+        collection.add_link(
+            source_col_sid=source_col_sid, target_col_sid=target_col_sid
+        )
 
     return collection
 
@@ -243,9 +172,7 @@ def parse_create_statement(collection: ObjectCollection, statement):
 #     return statement
 
 
-def create_collection(statements):
-
-    collection = ObjectCollection()
+def add_to_collection(collection, statements):
 
     # Looping through all SQL statements in the file, determine what type of statement it is. Add to mapping file accordingly.
     for statement in statements:
@@ -253,30 +180,25 @@ def create_collection(statements):
         # statement = clean(statement)
 
         if statement_type == &#34;CREATE&#34;:
-            mapping = parse_create_statement(collection=collection, statement=statement)
+            collection = parse_create_statement(
+                collection=collection, statement=statement
+            )
 
         # TODO: Insert other SQL statements here...
 
-    return mapping
+    return collection
 
 
-def main(path):
+def main(collection: ObjectCollection, path):
 
     with open(path, &#34;r&#34;) as f:
         raw = f.read()
 
     statements = sqlparse.parse(raw)
 
-    collection = create_collection(statements=statements)
+    collection = add_to_collection(collection=collection, statements=statements)
 
-    return collection
-
-    # output_folder = &#34;working-files&#34;
-    # if not os.path.exists(output_folder):
-    #     os.makedirs(output_folder)
-
-    # with open(&#39;output.json&#39;, &#34;w&#34;) as f:
-    #     json.dump(mappings, f, indent=6)</code></pre>
+    return collection</code></pre>
 </details>
 </section>
 <section>
@@ -286,8 +208,8 @@ def main(path):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="flowsql.app.parse.create_collection"><code class="name flex">
-<span>def <span class="ident">create_collection</span></span>(<span>statements)</span>
+<dt id="flowsql.app.parse.add_to_collection"><code class="name flex">
+<span>def <span class="ident">add_to_collection</span></span>(<span>collection, statements)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -295,9 +217,7 @@ def main(path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create_collection(statements):
-
-    collection = ObjectCollection()
+<pre><code class="python">def add_to_collection(collection, statements):
 
     # Looping through all SQL statements in the file, determine what type of statement it is. Add to mapping file accordingly.
     for statement in statements:
@@ -305,15 +225,17 @@ def main(path):
         # statement = clean(statement)
 
         if statement_type == &#34;CREATE&#34;:
-            mapping = parse_create_statement(collection=collection, statement=statement)
+            collection = parse_create_statement(
+                collection=collection, statement=statement
+            )
 
         # TODO: Insert other SQL statements here...
 
-    return mapping</code></pre>
+    return collection</code></pre>
 </details>
 </dd>
 <dt id="flowsql.app.parse.main"><code class="name flex">
-<span>def <span class="ident">main</span></span>(<span>path)</span>
+<span>def <span class="ident">main</span></span>(<span>collection: <a title="flowsql.app.Objects.ObjectCollection" href="Objects.html#flowsql.app.Objects.ObjectCollection">ObjectCollection</a>, path)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -321,27 +243,20 @@ def main(path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def main(path):
+<pre><code class="python">def main(collection: ObjectCollection, path):
 
     with open(path, &#34;r&#34;) as f:
         raw = f.read()
 
     statements = sqlparse.parse(raw)
 
-    collection = create_collection(statements=statements)
+    collection = add_to_collection(collection=collection, statements=statements)
 
-    return collection
-
-    # output_folder = &#34;working-files&#34;
-    # if not os.path.exists(output_folder):
-    #     os.makedirs(output_folder)
-
-    # with open(&#39;output.json&#39;, &#34;w&#34;) as f:
-    #     json.dump(mappings, f, indent=6)</code></pre>
+    return collection</code></pre>
 </details>
 </dd>
 <dt id="flowsql.app.parse.parse_create_statement"><code class="name flex">
-<span>def <span class="ident">parse_create_statement</span></span>(<span>collection: <a title="flowsql.app.parse.ObjectCollection" href="#flowsql.app.parse.ObjectCollection">ObjectCollection</a>, statement)</span>
+<span>def <span class="ident">parse_create_statement</span></span>(<span>collection: <a title="flowsql.app.Objects.ObjectCollection" href="Objects.html#flowsql.app.Objects.ObjectCollection">ObjectCollection</a>, statement)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -444,23 +359,23 @@ def main(path):
     for col in all_cols:
         schema, table = col.split(&#34;.&#34;)[:2]
 
-        full_schema_name = schema
-        full_table_name = &#34;.&#34;.join([schema, table])
-        full_column_name = col
+        schema_sid = schema
+        table_sid = &#34;.&#34;.join([schema, table])
+        column_sid = col
 
-        collection.add_schema(full_name=full_schema_name)
+        collection.add_schema(sid=schema_sid)
 
-        schema_id = collection._schema_lookup[full_schema_name]
-        collection.add_table(full_name=full_table_name, schema_id=schema_id)
+        collection.add_table(sid=table_sid, schema_sid=schema_sid)
 
-        table_id = collection._table_lookup[full_table_name]
-        collection.add_column(full_name=full_column_name, table_id=table_id)
+        collection.add_column(sid=column_sid, table_sid=table_sid)
 
     for link in links:
-        source_col_id = collection._column_lookup[link[0]]
-        target_col_id = collection._column_lookup[link[1]]
+        source_col_sid = link[0]
+        target_col_sid = link[1]
 
-        collection.add_link(source_col_id=source_col_id, target_col_id=target_col_id)
+        collection.add_link(
+            source_col_sid=source_col_sid, target_col_sid=target_col_sid
+        )
 
     return collection</code></pre>
 </details>
@@ -468,240 +383,6 @@ def main(path):
 </dl>
 </section>
 <section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="flowsql.app.parse.Column"><code class="flex name class">
-<span>class <span class="ident">Column</span></span>
-<span>(</span><span>full_name: str, table_id: str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Column(Object):
-    def __init__(self, full_name: str, table_id: str):
-        Object.__init__(self, full_name)
-        self.table_id = table_id
-        self.name = full_name.split(&#34;.&#34;)[2]</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="flowsql.app.parse.Object" href="#flowsql.app.parse.Object">Object</a></li>
-</ul>
-</dd>
-<dt id="flowsql.app.parse.Link"><code class="flex name class">
-<span>class <span class="ident">Link</span></span>
-<span>(</span><span>source_col_id: int, target_col_id: int)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Link(Object):
-    def __init__(self, source_col_id: int, target_col_id: int):
-        Object.__init__(self, full_name=None)
-        self.source_id = source_col_id
-        self.target_id = target_col_id</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="flowsql.app.parse.Object" href="#flowsql.app.parse.Object">Object</a></li>
-</ul>
-</dd>
-<dt id="flowsql.app.parse.Object"><code class="flex name class">
-<span>class <span class="ident">Object</span></span>
-<span>(</span><span>full_name)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Object:
-    object_counter = 1
-
-    def __init__(self, full_name):
-        self.full_name = full_name
-        self.id = Object.object_counter
-        Object.object_counter += 1</code></pre>
-</details>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="flowsql.app.parse.Column" href="#flowsql.app.parse.Column">Column</a></li>
-<li><a title="flowsql.app.parse.Link" href="#flowsql.app.parse.Link">Link</a></li>
-<li><a title="flowsql.app.parse.Schema" href="#flowsql.app.parse.Schema">Schema</a></li>
-<li><a title="flowsql.app.parse.Table" href="#flowsql.app.parse.Table">Table</a></li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="flowsql.app.parse.Object.object_counter"><code class="name">var <span class="ident">object_counter</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
-<dt id="flowsql.app.parse.ObjectCollection"><code class="flex name class">
-<span>class <span class="ident">ObjectCollection</span></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class ObjectCollection:
-    def __init__(self):
-        self._schemas = []
-        self._schema_lookup = {}
-        self._tables = []
-        self._table_lookup = {}
-        self._columns = []
-        self._column_lookup = {}
-        self._links = []
-
-    def add_schema(self, full_name: str):
-        print(full_name, self._schema_lookup)
-        if full_name in self._schema_lookup:
-            return
-        new_schema = Schema(full_name=full_name)
-        self._schemas.append(new_schema)
-        self._schema_lookup[new_schema.full_name] = new_schema.id
-
-    def add_table(self, full_name: str, schema_id: int):
-        if full_name in self._table_lookup:
-            return
-        new_table = Table(full_name=full_name, schema_id=schema_id)
-        self._tables.append(new_table)
-        self._table_lookup[new_table.full_name] = new_table.id
-
-    def add_column(self, full_name: str, table_id: int):
-        if full_name in self._column_lookup:
-            return
-        new_column = Column(full_name=full_name, table_id=table_id)
-        self._columns.append(new_column)
-        self._column_lookup[new_column.full_name] = new_column.id
-
-    def add_link(self, source_col_id: int, target_col_id: int):
-        new_link = Link(source_col_id=source_col_id, target_col_id=target_col_id)
-        self._links.append(new_link)</code></pre>
-</details>
-<h3>Methods</h3>
-<dl>
-<dt id="flowsql.app.parse.ObjectCollection.add_column"><code class="name flex">
-<span>def <span class="ident">add_column</span></span>(<span>self, full_name: str, table_id: int)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_column(self, full_name: str, table_id: int):
-    if full_name in self._column_lookup:
-        return
-    new_column = Column(full_name=full_name, table_id=table_id)
-    self._columns.append(new_column)
-    self._column_lookup[new_column.full_name] = new_column.id</code></pre>
-</details>
-</dd>
-<dt id="flowsql.app.parse.ObjectCollection.add_link"><code class="name flex">
-<span>def <span class="ident">add_link</span></span>(<span>self, source_col_id: int, target_col_id: int)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_link(self, source_col_id: int, target_col_id: int):
-    new_link = Link(source_col_id=source_col_id, target_col_id=target_col_id)
-    self._links.append(new_link)</code></pre>
-</details>
-</dd>
-<dt id="flowsql.app.parse.ObjectCollection.add_schema"><code class="name flex">
-<span>def <span class="ident">add_schema</span></span>(<span>self, full_name: str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_schema(self, full_name: str):
-    print(full_name, self._schema_lookup)
-    if full_name in self._schema_lookup:
-        return
-    new_schema = Schema(full_name=full_name)
-    self._schemas.append(new_schema)
-    self._schema_lookup[new_schema.full_name] = new_schema.id</code></pre>
-</details>
-</dd>
-<dt id="flowsql.app.parse.ObjectCollection.add_table"><code class="name flex">
-<span>def <span class="ident">add_table</span></span>(<span>self, full_name: str, schema_id: int)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_table(self, full_name: str, schema_id: int):
-    if full_name in self._table_lookup:
-        return
-    new_table = Table(full_name=full_name, schema_id=schema_id)
-    self._tables.append(new_table)
-    self._table_lookup[new_table.full_name] = new_table.id</code></pre>
-</details>
-</dd>
-</dl>
-</dd>
-<dt id="flowsql.app.parse.Schema"><code class="flex name class">
-<span>class <span class="ident">Schema</span></span>
-<span>(</span><span>full_name: str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Schema(Object):
-    def __init__(self, full_name: str):
-        Object.__init__(self, full_name)
-        self.full_name = full_name</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="flowsql.app.parse.Object" href="#flowsql.app.parse.Object">Object</a></li>
-</ul>
-</dd>
-<dt id="flowsql.app.parse.Table"><code class="flex name class">
-<span>class <span class="ident">Table</span></span>
-<span>(</span><span>full_name: str, schema_id: str)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Table(Object):
-    def __init__(self, full_name: str, schema_id: str):
-        Object.__init__(self, full_name)
-        self.schema_id = schema_id
-        self.name = full_name.split(&#34;.&#34;)[1]</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="flowsql.app.parse.Object" href="#flowsql.app.parse.Object">Object</a></li>
-</ul>
-</dd>
-</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -717,40 +398,9 @@ def main(path):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="flowsql.app.parse.create_collection" href="#flowsql.app.parse.create_collection">create_collection</a></code></li>
+<li><code><a title="flowsql.app.parse.add_to_collection" href="#flowsql.app.parse.add_to_collection">add_to_collection</a></code></li>
 <li><code><a title="flowsql.app.parse.main" href="#flowsql.app.parse.main">main</a></code></li>
 <li><code><a title="flowsql.app.parse.parse_create_statement" href="#flowsql.app.parse.parse_create_statement">parse_create_statement</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="flowsql.app.parse.Column" href="#flowsql.app.parse.Column">Column</a></code></h4>
-</li>
-<li>
-<h4><code><a title="flowsql.app.parse.Link" href="#flowsql.app.parse.Link">Link</a></code></h4>
-</li>
-<li>
-<h4><code><a title="flowsql.app.parse.Object" href="#flowsql.app.parse.Object">Object</a></code></h4>
-<ul class="">
-<li><code><a title="flowsql.app.parse.Object.object_counter" href="#flowsql.app.parse.Object.object_counter">object_counter</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="flowsql.app.parse.ObjectCollection" href="#flowsql.app.parse.ObjectCollection">ObjectCollection</a></code></h4>
-<ul class="">
-<li><code><a title="flowsql.app.parse.ObjectCollection.add_column" href="#flowsql.app.parse.ObjectCollection.add_column">add_column</a></code></li>
-<li><code><a title="flowsql.app.parse.ObjectCollection.add_link" href="#flowsql.app.parse.ObjectCollection.add_link">add_link</a></code></li>
-<li><code><a title="flowsql.app.parse.ObjectCollection.add_schema" href="#flowsql.app.parse.ObjectCollection.add_schema">add_schema</a></code></li>
-<li><code><a title="flowsql.app.parse.ObjectCollection.add_table" href="#flowsql.app.parse.ObjectCollection.add_table">add_table</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="flowsql.app.parse.Schema" href="#flowsql.app.parse.Schema">Schema</a></code></h4>
-</li>
-<li>
-<h4><code><a title="flowsql.app.parse.Table" href="#flowsql.app.parse.Table">Table</a></code></h4>
-</li>
 </ul>
 </li>
 </ul>

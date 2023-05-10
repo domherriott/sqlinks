@@ -5,78 +5,7 @@ import os
 import logging
 import itertools
 
-
-class ObjectCollection:
-    def __init__(self):
-        self._schemas = []
-        self._schema_lookup = {}
-        self._tables = []
-        self._table_lookup = {}
-        self._columns = []
-        self._column_lookup = {}
-        self._links = []
-
-    def add_schema(self, full_name: str):
-        print(full_name, self._schema_lookup)
-        if full_name in self._schema_lookup:
-            return
-        new_schema = Schema(full_name=full_name)
-        self._schemas.append(new_schema)
-        self._schema_lookup[new_schema.full_name] = new_schema.id
-
-    def add_table(self, full_name: str, schema_id: int):
-        if full_name in self._table_lookup:
-            return
-        new_table = Table(full_name=full_name, schema_id=schema_id)
-        self._tables.append(new_table)
-        self._table_lookup[new_table.full_name] = new_table.id
-
-    def add_column(self, full_name: str, table_id: int):
-        if full_name in self._column_lookup:
-            return
-        new_column = Column(full_name=full_name, table_id=table_id)
-        self._columns.append(new_column)
-        self._column_lookup[new_column.full_name] = new_column.id
-
-    def add_link(self, source_col_id: int, target_col_id: int):
-        new_link = Link(source_col_id=source_col_id, target_col_id=target_col_id)
-        self._links.append(new_link)
-
-
-class Object:
-    object_counter = 1
-
-    def __init__(self, full_name):
-        self.full_name = full_name
-        self.id = Object.object_counter
-        Object.object_counter += 1
-
-
-class Schema(Object):
-    def __init__(self, full_name: str):
-        Object.__init__(self, full_name)
-        self.full_name = full_name
-
-
-class Table(Object):
-    def __init__(self, full_name: str, schema_id: str):
-        Object.__init__(self, full_name)
-        self.schema_id = schema_id
-        self.name = full_name.split(".")[1]
-
-
-class Column(Object):
-    def __init__(self, full_name: str, table_id: str):
-        Object.__init__(self, full_name)
-        self.table_id = table_id
-        self.name = full_name.split(".")[2]
-
-
-class Link(Object):
-    def __init__(self, source_col_id: int, target_col_id: int):
-        Object.__init__(self, full_name=None)
-        self.source_id = source_col_id
-        self.target_id = target_col_id
+from flowsql.app.Objects import ObjectCollection
 
 
 def parse_create_statement(collection: ObjectCollection, statement):
@@ -174,23 +103,23 @@ def parse_create_statement(collection: ObjectCollection, statement):
     for col in all_cols:
         schema, table = col.split(".")[:2]
 
-        full_schema_name = schema
-        full_table_name = ".".join([schema, table])
-        full_column_name = col
+        schema_sid = schema
+        table_sid = ".".join([schema, table])
+        column_sid = col
 
-        collection.add_schema(full_name=full_schema_name)
+        collection.add_schema(sid=schema_sid)
 
-        schema_id = collection._schema_lookup[full_schema_name]
-        collection.add_table(full_name=full_table_name, schema_id=schema_id)
+        collection.add_table(sid=table_sid, schema_sid=schema_sid)
 
-        table_id = collection._table_lookup[full_table_name]
-        collection.add_column(full_name=full_column_name, table_id=table_id)
+        collection.add_column(sid=column_sid, table_sid=table_sid)
 
     for link in links:
-        source_col_id = collection._column_lookup[link[0]]
-        target_col_id = collection._column_lookup[link[1]]
+        source_col_sid = link[0]
+        target_col_sid = link[1]
 
-        collection.add_link(source_col_id=source_col_id, target_col_id=target_col_id)
+        collection.add_link(
+            source_col_sid=source_col_sid, target_col_sid=target_col_sid
+        )
 
     return collection
 
@@ -215,9 +144,7 @@ def parse_create_statement(collection: ObjectCollection, statement):
 #     return statement
 
 
-def create_collection(statements):
-
-    collection = ObjectCollection()
+def add_to_collection(collection, statements):
 
     # Looping through all SQL statements in the file, determine what type of statement it is. Add to mapping file accordingly.
     for statement in statements:
@@ -225,27 +152,22 @@ def create_collection(statements):
         # statement = clean(statement)
 
         if statement_type == "CREATE":
-            mapping = parse_create_statement(collection=collection, statement=statement)
+            collection = parse_create_statement(
+                collection=collection, statement=statement
+            )
 
         # TODO: Insert other SQL statements here...
 
-    return mapping
+    return collection
 
 
-def main(path):
+def main(collection: ObjectCollection, path):
 
     with open(path, "r") as f:
         raw = f.read()
 
     statements = sqlparse.parse(raw)
 
-    collection = create_collection(statements=statements)
+    collection = add_to_collection(collection=collection, statements=statements)
 
     return collection
-
-    # output_folder = "working-files"
-    # if not os.path.exists(output_folder):
-    #     os.makedirs(output_folder)
-
-    # with open('output.json', "w") as f:
-    #     json.dump(mappings, f, indent=6)

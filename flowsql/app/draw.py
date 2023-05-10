@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 
 
-def gen_drawing(tables):
+def gen_drawing(snapshot):
     """_summary_
     Args:
         tables (_type_): _description_
@@ -18,7 +18,7 @@ def gen_drawing(tables):
 
     template = env.get_template("drawio_template.xml")
 
-    output = template.render(tables=tables)
+    output = template.render(snapshot=snapshot)
     return output
 
 
@@ -43,7 +43,7 @@ def save_drawing(output, output_filename):
         f.write(output)
 
 
-def main(working_dir: Path, output_filename: Path):
+def main(collection, output_filename: Path):
     """_summary_
 
     Args:
@@ -51,13 +51,7 @@ def main(working_dir: Path, output_filename: Path):
         output_filename (Path): _description_
     """
 
-    # reload object from file
-    with open(working_dir / "tables.pkl", "rb") as f:
-        tables = pickle.load(f)
-
-    # logging.debug(tables)
-
-    output = gen_drawing(tables)
+    output = gen_drawing(snapshot=collection.snapshot)
     logging.debug(output_filename)
 
     save_drawing(output, output_filename)
