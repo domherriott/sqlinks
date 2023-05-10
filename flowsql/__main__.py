@@ -98,7 +98,6 @@ if __name__ == "__main__":
         print(f"Processing file {i+1} of {len(paths)}: {path['relative_path']}")
         collection = parse.main(collection=collection, path=path["absolute_path"])
 
-    collection.print_details()
     collection.create_snapshot()
 
     print("Generating diagram...")

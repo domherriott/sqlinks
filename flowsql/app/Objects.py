@@ -2,7 +2,7 @@ import pprint
 
 
 class Object:
-    object_counter = 1
+    object_counter = 1000
 
     def __init__(self, sid):
         # String ID
@@ -23,7 +23,7 @@ class Table(Object):
         Object.__init__(self, sid)
         self.schema_sid = schema_sid
         self.name = sid.split(".")[1]
-        self.max_text_length = len(self.sid)
+        self.max_text_length = len(self.name)
         self.num_columns = 0
         self.num_children = 0
         self.num_parents = 0
@@ -106,71 +106,84 @@ class ObjectCollection:
         self._tables[source_table_sid].num_children += 1
         self._tables[target_table_sid].num_parents += 1
 
-    def print_details(self):
-        line_breaks = 3
-        schema_offset = 2
-        table_offset = 3
-        whole_line = 100
-        column_width = (whole_line - table_offset) // 2
+    def print_snapshot(self, how="pretty"):
+        def pretty_print_snapshot(snapshot=self.snapshot):
 
-        def print_line(type=None, text="", source_sid=None, target_sid=None):
+            line_breaks = 3
+            schema_offset = 2
+            table_offset = 3
+            whole_line = 100
+            column_width = (whole_line - table_offset) // 2
 
-            if type == "schema":
-                print("\n" * line_breaks)
-                print(" " * schema_offset + "#" * whole_line)
-                buffer = 3
-                offset = len(text) // 2
-                print(" " * schema_offset + " " * (column_width - offset) + text)
-                print(" " * schema_offset + "#" * whole_line)
+            def print_line(type=None, text="", source_sid=None, target_sid=None):
 
-            elif type == "table":
-                print()
-                print(" " * table_offset + "+" + "-" * column_width * 2 + "+")
-                offset = len(text) // 2
-                print(
-                    " " * table_offset
-                    + "|"
-                    + " " * (column_width - offset)
-                    + text
-                    + " " * (column_width - (len(text) - offset))
-                    + "|"
-                )
-                print(" " * table_offset + "+" + "-" * column_width * 2 + "+")
+                if type == "schema":
+                    print("\n" * line_breaks)
+                    print(" " * schema_offset + "#" * whole_line)
+                    buffer = 3
+                    offset = len(text) // 2
+                    print(" " * schema_offset + " " * (column_width - offset) + text)
+                    print(" " * schema_offset + "#" * whole_line)
 
-            elif type == "link":
-                print(
-                    " " * table_offset
-                    + "|"
-                    + source_sid
-                    + " " * (column_width - len(source_sid) - 2)
-                    + "->"
-                    + " " * (column_width - len(target_sid))
-                    + target_sid
-                    + "|"
-                )
-                print(" " * table_offset + "+" + "-" * column_width * 2 + "+")
+                elif type == "table":
+                    print()
+                    print(" " * table_offset + "+" + "-" * column_width * 2 + "+")
+                    offset = len(text) // 2
+                    print(
+                        " " * table_offset
+                        + "|"
+                        + " " * (column_width - offset)
+                        + text
+                        + " " * (column_width - (len(text) - offset))
+                        + "|"
+                    )
+                    print(" " * table_offset + "+" + "-" * column_width * 2 + "+")
 
-        for schema_sid, table_sids in self._schema_tables_lookup.items():
-            print_line(type="schema", text=schema_sid)
+                elif type == "link":
+                    print(
+                        " " * table_offset
+                        + "|"
+                        + source_sid
+                        + " " * (column_width - len(source_sid) - 2)
+                        + "->"
+                        + " " * (column_width - len(target_sid))
+                        + target_sid
+                        + "|"
+                    )
+                    print(" " * table_offset + "+" + "-" * column_width * 2 + "+")
 
-            for table_sid in table_sids:
-                print_line(type="table", text=table_sid)
+            for schema in snapshot:
+                schema_sid = schema["name"]
+                print_line(type="schema", text=schema_sid)
 
-                for column_sid in self._table_columns_lookup[table_sid]:
-                    link_nids = self._column_links_lookup[column_sid]
+                for table in schema["tables"]:
+                    table_sid = table["name"]
+                    print_line(type="table", text=table_sid)
 
-                    if link_nids == []:
-                        print_line(type="link", source_sid="", target_sid=column_sid)
+                    for column in table["cols"]:
+                        column_sid = column["name"]
 
-                    else:
-                        for link_nid in link_nids:
+                        links = column["links"]
+
+                        if links == []:
                             print_line(
-                                type="link",
-                                source_sid=self._links[link_nid].source_sid,
-                                target_sid=self._links[link_nid].target_sid,
+                                type="link", source_sid="", target_sid=column_sid
                             )
 
-        print("\n" * line_breaks)
+                        else:
+                            for link in links:
+                                print_line(
+                                    type="link",
+                                    source_sid=self._links[link["link_id"]].source_sid,
+                                    target_sid=self._links[link["link_id"]].target_sid,
+                                )
+
+            print("\n" * line_breaks)
+
+        if how == "raw":
+            pprint.pprint(self.snapshot)
+        elif how == "pretty":
+            pretty_print_snapshot()
 
     def create_snapshot(self):
         """
@@ -244,7 +257,7 @@ class ObjectCollection:
                 self._tables[table_sid].order = order
                 order += 1
 
-        def create_base_snapshot():
+        def create_snapshot():
             snapshot = []
             x_delta = 400
             y_delta = 150
@@ -254,12 +267,22 @@ class ObjectCollection:
             num_per_column = 2
 
             for schema_sid, table_sids in self._schema_tables_lookup.items():
+                schema = self._schemas[schema_sid]
+                schema_snapshot = {
+                    "name": schema.sid,
+                    "id": schema.nid,
+                    "x": 0,
+                    "y": 0,
+                    "height": 100,
+                    "width": 100,
+                    "tables": [],
+                }
 
                 for table_sid in table_sids:
 
                     table = self._tables[table_sid]
                     table_snapshot = {
-                        "name": table.sid,
+                        "name": table.name,
                         "id": table.nid,
                         "order": table.order,
                         "height": (table.num_columns + 1) * row_height,
@@ -279,6 +302,7 @@ class ObjectCollection:
                             "name": column.name,
                             "id": column.nid,
                             "width": table_snapshot["width"],
+                            "height": row_height,
                             "y": column_counter * row_height,
                             "links": [],
                         }
@@ -298,11 +322,13 @@ class ObjectCollection:
                         table_snapshot["cols"].append(column_snapshot)
                         column_counter += 1
 
-                    snapshot.append(table_snapshot)
+                    schema_snapshot["tables"].append(table_snapshot)
+
+                snapshot.append(schema_snapshot)
 
             return snapshot
 
-        table_ordering = determine_table_ordering()
-        snapshot = create_base_snapshot()
-        self.snapshot = snapshot
-        pprint.pprint(self.snapshot)
+        determine_table_ordering()
+        self.snapshot = create_snapshot()
+        self.print_snapshot(how="raw")
+        self.print_snapshot(how="pretty")
