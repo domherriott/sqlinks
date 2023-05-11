@@ -33,18 +33,23 @@ import os
 import logging
 import itertools
 
-from flowsql.app.Objects import ObjectCollection
+from flowsql.app.Objects import Collection
+from flowsql.app.helpers import deconstruct_sid
 
 
-def parse_create_statement(collection: ObjectCollection, statement):
+def parse_simple_CTAS_statement(parser, collection: Collection, statement):
     def get_target_table(statement):
-        for line in str(statement).split(&#34;\n&#34;):
-            if (&#34;CREATE TABLE&#34; in line) and (&#34;AS&#34; in line):
-                l = line.split(&#34; &#34;)
-                target = l[2]
-            elif &#34;INSERT INTO&#34; in line:
-                l = line.split(&#34; &#34;)
-                target = l[2]
+
+        statement = str(statement)
+        if (&#34;create table&#34; in statement) and (&#34;as&#34; in statement):
+            l = statement.split(&#34; &#34;)
+            target = l[2]
+
+        elif &#34;insert into&#34; in statement:
+            l = statement.split(&#34; &#34;)
+            target = l[2]
+        else:
+            return None, None
 
         target_schema, target_table = target.split(&#34;.&#34;)
 
@@ -84,11 +89,13 @@ def parse_create_statement(collection: ObjectCollection, statement):
         links = []
         for source_col in source_cols:
             if source_col in inv_aliases:
+                # If a source col is mentioned, and has an alias, then it features in the target table but is renamed
                 # Add schema and table info to target cols
                 target_col = f&#34;{target_schema}.{target_table}.{inv_aliases[source_col]}&#34;
                 target_cols.append(target_col)
 
             else:
+                # If a source col is mentioned, and isn&#39;t an alias, then it must feature as a target col with the same name
                 # Add schema and table info to target cols
                 target_col = (
                     f&#39;{target_schema}.{target_table}.{source_col.split(&#34;.&#34;)[2]}&#39;
@@ -122,54 +129,58 @@ def parse_create_statement(collection: ObjectCollection, statement):
         #                     target_cols.append(col)
 
     target_schema, target_table = get_target_table(statement=statement)
-    parser = Parser(str(statement))
 
     all_cols, links = get_cols_and_links(
         parser=parser, target_schema=target_schema, target_table=target_table
     )
 
-    for col in all_cols:
-        schema, table = col.split(&#34;.&#34;)[:2]
-
-        schema_sid = schema
-        table_sid = &#34;.&#34;.join([schema, table])
-        column_sid = col
+    for column_sid in all_cols:
+        schema_sid, table_sid, column_sid = deconstruct_sid(column_sid, how=&#34;column&#34;)
 
         collection.add_schema(sid=schema_sid)
 
-        collection.add_table(sid=table_sid, schema_sid=schema_sid)
+        schema = collection.schemas[schema_sid]
+        schema.add_table(sid=table_sid, schema_sid=schema_sid)
 
-        collection.add_column(sid=column_sid, table_sid=table_sid)
+        table = schema.tables[table_sid]
+        table.add_column(sid=column_sid, table_sid=table_sid)
 
     for link in links:
         source_col_sid = link[0]
         target_col_sid = link[1]
 
-        collection.add_link(
-            source_col_sid=source_col_sid, target_col_sid=target_col_sid
+        target_schema_sid, target_table_sid, target_column_sid = deconstruct_sid(
+            target_col_sid, how=&#34;column&#34;
         )
+
+        column = (
+            collection.schemas[target_schema_sid]
+            .tables[target_table_sid]
+            .columns[target_column_sid]
+        )
+        column.add_link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
 
     return collection
 
 
-# def clean(statement):
-#     &#34;&#34;&#34;
-#     Clean the statement, returning a list of individual words.
+def clean(raw):
+    &#34;&#34;&#34;
+    Clean the statement, returning a list of individual words.
 
-#     Args:
-#         statement (_type_): _description_
+    Args:
+        statement (_type_): _description_
 
-#     Returns:
-#         _type_: _description_
-#     &#34;&#34;&#34;
-#     # # Remove new lines to negate different formats
-#     # statement = str(statement).replace(&#39;\n&#39;, &#39; &#39;)
-#     # # Remove semi-colons as they mark the end of SQL statements
-#     # statement = str(statement).replace(&#39;;&#39;, &#39;&#39;)
+    Returns:
+        _type_: _description_
+    &#34;&#34;&#34;
+    # Remove new lines to negate different formats
+    clean = str(raw).lower()
+    clean = clean.replace(&#34;\n&#34;, &#34; &#34;)
+    clean = clean.replace(&#34;\t&#34;, &#34; &#34;)
 
-#     # statement = statement.split(&#39; &#39;)
-#     # statement = [s for s in statement if s != &#39;&#39;]
-#     return statement
+    # statement = statement.split(&#39; &#39;)
+    # statement = [s for s in statement if s != &#39;&#39;]
+    return clean
 
 
 def add_to_collection(collection, statements):
@@ -177,24 +188,41 @@ def add_to_collection(collection, statements):
     # Looping through all SQL statements in the file, determine what type of statement it is. Add to mapping file accordingly.
     for statement in statements:
         statement_type = statement.get_type()
-        # statement = clean(statement)
+
+        if statement_type == &#34;UNKNOWN&#34;:
+            continue
+
+        parser = Parser(str(statement))
+
+        flag_creates_temporary_table = &#34;create temporary table&#34; in str(statement)
+        flag_contains_as_select = &#34;as select&#34; in str(statement)
 
         if statement_type == &#34;CREATE&#34;:
-            collection = parse_create_statement(
-                collection=collection, statement=statement
-            )
+            if flag_creates_temporary_table:
+                # TODO: Currently doesn&#39;t support temporary tables
+                continue
+
+            elif len(parser.with_names) == 0 and flag_contains_as_select:
+                collection = parse_simple_CTAS_statement(
+                    parser=parser, collection=collection, statement=statement
+                )
 
         # TODO: Insert other SQL statements here...
 
     return collection
 
 
-def main(collection: ObjectCollection, path):
+def main(collection: Collection, path):
 
-    with open(path, &#34;r&#34;) as f:
-        raw = f.read()
+    try:
+        with open(path, &#34;r&#34;) as f:
+            print(path)
+            raw = f.read()
+    except:
+        print(f&#34;WARNING: Encoding failure {path}&#34;)
+        return collection
 
-    statements = sqlparse.parse(raw)
+    statements = sqlparse.parse(clean(raw))
 
     collection = add_to_collection(collection=collection, statements=statements)
 
@@ -222,20 +250,71 @@ def main(collection: ObjectCollection, path):
     # Looping through all SQL statements in the file, determine what type of statement it is. Add to mapping file accordingly.
     for statement in statements:
         statement_type = statement.get_type()
-        # statement = clean(statement)
+
+        if statement_type == &#34;UNKNOWN&#34;:
+            continue
+
+        parser = Parser(str(statement))
+
+        flag_creates_temporary_table = &#34;create temporary table&#34; in str(statement)
+        flag_contains_as_select = &#34;as select&#34; in str(statement)
 
         if statement_type == &#34;CREATE&#34;:
-            collection = parse_create_statement(
-                collection=collection, statement=statement
-            )
+            if flag_creates_temporary_table:
+                # TODO: Currently doesn&#39;t support temporary tables
+                continue
+
+            elif len(parser.with_names) == 0 and flag_contains_as_select:
+                collection = parse_simple_CTAS_statement(
+                    parser=parser, collection=collection, statement=statement
+                )
 
         # TODO: Insert other SQL statements here...
 
     return collection</code></pre>
 </details>
 </dd>
+<dt id="flowsql.app.parse.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>raw)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clean the statement, returning a list of individual words.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>statement</code></strong> :&ensp;<code>_type_</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>_type_</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean(raw):
+    &#34;&#34;&#34;
+    Clean the statement, returning a list of individual words.
+
+    Args:
+        statement (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    &#34;&#34;&#34;
+    # Remove new lines to negate different formats
+    clean = str(raw).lower()
+    clean = clean.replace(&#34;\n&#34;, &#34; &#34;)
+    clean = clean.replace(&#34;\t&#34;, &#34; &#34;)
+
+    # statement = statement.split(&#39; &#39;)
+    # statement = [s for s in statement if s != &#39;&#39;]
+    return clean</code></pre>
+</details>
+</dd>
 <dt id="flowsql.app.parse.main"><code class="name flex">
-<span>def <span class="ident">main</span></span>(<span>collection: <a title="flowsql.app.Objects.ObjectCollection" href="Objects.html#flowsql.app.Objects.ObjectCollection">ObjectCollection</a>, path)</span>
+<span>def <span class="ident">main</span></span>(<span>collection: <a title="flowsql.app.Objects.Collection" href="Objects.html#flowsql.app.Objects.Collection">Collection</a>, path)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -243,20 +322,25 @@ def main(collection: ObjectCollection, path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def main(collection: ObjectCollection, path):
+<pre><code class="python">def main(collection: Collection, path):
 
-    with open(path, &#34;r&#34;) as f:
-        raw = f.read()
+    try:
+        with open(path, &#34;r&#34;) as f:
+            print(path)
+            raw = f.read()
+    except:
+        print(f&#34;WARNING: Encoding failure {path}&#34;)
+        return collection
 
-    statements = sqlparse.parse(raw)
+    statements = sqlparse.parse(clean(raw))
 
     collection = add_to_collection(collection=collection, statements=statements)
 
     return collection</code></pre>
 </details>
 </dd>
-<dt id="flowsql.app.parse.parse_create_statement"><code class="name flex">
-<span>def <span class="ident">parse_create_statement</span></span>(<span>collection: <a title="flowsql.app.Objects.ObjectCollection" href="Objects.html#flowsql.app.Objects.ObjectCollection">ObjectCollection</a>, statement)</span>
+<dt id="flowsql.app.parse.parse_simple_CTAS_statement"><code class="name flex">
+<span>def <span class="ident">parse_simple_CTAS_statement</span></span>(<span>parser, collection: <a title="flowsql.app.Objects.Collection" href="Objects.html#flowsql.app.Objects.Collection">Collection</a>, statement)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -264,15 +348,19 @@ def main(collection: ObjectCollection, path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def parse_create_statement(collection: ObjectCollection, statement):
+<pre><code class="python">def parse_simple_CTAS_statement(parser, collection: Collection, statement):
     def get_target_table(statement):
-        for line in str(statement).split(&#34;\n&#34;):
-            if (&#34;CREATE TABLE&#34; in line) and (&#34;AS&#34; in line):
-                l = line.split(&#34; &#34;)
-                target = l[2]
-            elif &#34;INSERT INTO&#34; in line:
-                l = line.split(&#34; &#34;)
-                target = l[2]
+
+        statement = str(statement)
+        if (&#34;create table&#34; in statement) and (&#34;as&#34; in statement):
+            l = statement.split(&#34; &#34;)
+            target = l[2]
+
+        elif &#34;insert into&#34; in statement:
+            l = statement.split(&#34; &#34;)
+            target = l[2]
+        else:
+            return None, None
 
         target_schema, target_table = target.split(&#34;.&#34;)
 
@@ -312,11 +400,13 @@ def main(collection: ObjectCollection, path):
         links = []
         for source_col in source_cols:
             if source_col in inv_aliases:
+                # If a source col is mentioned, and has an alias, then it features in the target table but is renamed
                 # Add schema and table info to target cols
                 target_col = f&#34;{target_schema}.{target_table}.{inv_aliases[source_col]}&#34;
                 target_cols.append(target_col)
 
             else:
+                # If a source col is mentioned, and isn&#39;t an alias, then it must feature as a target col with the same name
                 # Add schema and table info to target cols
                 target_col = (
                     f&#39;{target_schema}.{target_table}.{source_col.split(&#34;.&#34;)[2]}&#39;
@@ -350,32 +440,36 @@ def main(collection: ObjectCollection, path):
         #                     target_cols.append(col)
 
     target_schema, target_table = get_target_table(statement=statement)
-    parser = Parser(str(statement))
 
     all_cols, links = get_cols_and_links(
         parser=parser, target_schema=target_schema, target_table=target_table
     )
 
-    for col in all_cols:
-        schema, table = col.split(&#34;.&#34;)[:2]
-
-        schema_sid = schema
-        table_sid = &#34;.&#34;.join([schema, table])
-        column_sid = col
+    for column_sid in all_cols:
+        schema_sid, table_sid, column_sid = deconstruct_sid(column_sid, how=&#34;column&#34;)
 
         collection.add_schema(sid=schema_sid)
 
-        collection.add_table(sid=table_sid, schema_sid=schema_sid)
+        schema = collection.schemas[schema_sid]
+        schema.add_table(sid=table_sid, schema_sid=schema_sid)
 
-        collection.add_column(sid=column_sid, table_sid=table_sid)
+        table = schema.tables[table_sid]
+        table.add_column(sid=column_sid, table_sid=table_sid)
 
     for link in links:
         source_col_sid = link[0]
         target_col_sid = link[1]
 
-        collection.add_link(
-            source_col_sid=source_col_sid, target_col_sid=target_col_sid
+        target_schema_sid, target_table_sid, target_column_sid = deconstruct_sid(
+            target_col_sid, how=&#34;column&#34;
         )
+
+        column = (
+            collection.schemas[target_schema_sid]
+            .tables[target_table_sid]
+            .columns[target_column_sid]
+        )
+        column.add_link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
 
     return collection</code></pre>
 </details>
@@ -399,8 +493,9 @@ def main(collection: ObjectCollection, path):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="flowsql.app.parse.add_to_collection" href="#flowsql.app.parse.add_to_collection">add_to_collection</a></code></li>
+<li><code><a title="flowsql.app.parse.clean" href="#flowsql.app.parse.clean">clean</a></code></li>
 <li><code><a title="flowsql.app.parse.main" href="#flowsql.app.parse.main">main</a></code></li>
-<li><code><a title="flowsql.app.parse.parse_create_statement" href="#flowsql.app.parse.parse_create_statement">parse_create_statement</a></code></li>
+<li><code><a title="flowsql.app.parse.parse_simple_CTAS_statement" href="#flowsql.app.parse.parse_simple_CTAS_statement">parse_simple_CTAS_statement</a></code></li>
 </ul>
 </li>
 </ul>

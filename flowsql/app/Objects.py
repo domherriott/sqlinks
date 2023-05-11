@@ -1,4 +1,6 @@
 import pprint
+import math
+from flowsql.app.helpers import deconstruct_sid
 
 
 class Object:
@@ -16,6 +18,19 @@ class Schema(Object):
     def __init__(self, sid: str):
         Object.__init__(self, sid)
         self.name = sid
+        self.tables = {}
+
+        # Aggregates to be calculated later on
+        self._num_tables = 0
+        self._num_children = 0
+        self._num_parents = 0
+        self._order = None
+
+    def add_table(self, sid: str, schema_sid: int):
+        if sid in self.tables:
+            return
+
+        self.tables[sid] = Table(sid=sid, schema_sid=schema_sid)
 
 
 class Table(Object):
@@ -24,9 +39,25 @@ class Table(Object):
         self.schema_sid = schema_sid
         self.name = sid.split(".")[1]
         self.max_text_length = len(self.name)
-        self.num_columns = 0
-        self.num_children = 0
-        self.num_parents = 0
+
+        self.columns = {}
+
+        # Aggregates to be calculated later on
+        self._num_columns = 0
+        self._num_children = 0
+        self._num_parents = 0
+        self._order = None
+
+    def add_column(self, sid: str, table_sid: int):
+        if sid in self.columns:
+            return
+
+        new_column = Column(sid=sid, table_sid=table_sid)
+        self.columns[sid] = new_column
+
+        column_name_len = len(sid.split(".")[2])
+        if column_name_len > self.max_text_length:
+            self.max_text_length = column_name_len
 
 
 class Column(Object):
@@ -34,6 +65,13 @@ class Column(Object):
         Object.__init__(self, sid)
         self.table_sid = table_sid
         self.name = sid.split(".")[2]
+
+        # Links are associated by the target column
+        self.links = {}
+
+    def add_link(self, source_col_sid: int, target_col_sid: int):
+        new_link = Link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
+        self.links[new_link.nid] = new_link
 
 
 class Link(Object):
@@ -43,68 +81,108 @@ class Link(Object):
         self.target_sid = target_col_sid
 
 
-class ObjectCollection:
+class Collection:
     def __init__(self):
-        self._schemas = {}
-
-        # Schema lookup. The key (schema_sid) returns a list of tables (table_sids).
-        self._schema_tables_lookup = {}
-        self._tables = {}
-        self._table_columns_lookup = {}
-        self._columns = {}
-        # Target columns mapping to links
-        self._column_links_lookup = {}
-        self._links = {}
+        self.schemas = {}
 
     def add_schema(self, sid: str):
-        print(sid, self._schema_tables_lookup)
-        if sid in self._schema_tables_lookup:
+        print(sid, self.schemas)
+        if sid in self.schemas:
             return
-        new_schema = Schema(sid=sid)
-        self._schemas[sid] = new_schema
-        self._schema_tables_lookup[sid] = []
+        self.schemas[sid] = Schema(sid=sid)
 
-    def add_table(self, sid: str, schema_sid: int):
-        if sid in self._table_columns_lookup:
-            return
-        new_table = Table(sid=sid, schema_sid=schema_sid)
-        self._tables[sid] = new_table
+    def get_object(self, sid: str):
+        dot_count = sid.count(".")
 
-        # Append table sid to the schema->tables lookup
-        self._schema_tables_lookup[schema_sid].append(sid)
-        # Create empty table->cols lookup
-        self._table_columns_lookup[sid] = []
+        if dot_count == 0:
+            try:
+                object = self.schemas[sid]
+            except:
+                return None
 
-    def add_column(self, sid: str, table_sid: int):
-        if sid in self._column_links_lookup:
-            return
-        new_column = Column(sid=sid, table_sid=table_sid)
-        self._columns[sid] = new_column
+        elif dot_count == 1:
+            schema, table = deconstruct_sid(sid, how="table")
+            try:
+                object = self.schemas[schema].tables[table]
+            except:
+                return None
 
-        self._tables[table_sid].num_columns += 1
+        elif dot_count == 2:
+            schema, table, column = deconstruct_sid(sid, how="column")
+            try:
+                object = self.schemas[schema].tables[table].columns[column]
+            except:
+                return None
 
-        column_name_len = len(sid.split(".")[2])
-        if column_name_len > self._tables[table_sid].max_text_length:
-            self._tables[table_sid].max_text_length = column_name_len
+        return object
 
-        # Append column sid to the table->columns lookup
-        self._table_columns_lookup[table_sid].append(sid)
-        # Create empty col->links lookup
-        self._column_links_lookup[sid] = []
+    def calculate_aggregates(self):
 
-    def add_link(self, source_col_sid: int, target_col_sid: int):
-        new_link = Link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
-        self._links[new_link.nid] = new_link
+        # Calculating these aggregates for both Schema & Table
+        #
+        # self._num_columns = None
+        # self._num_children = None
+        # self._num_parents = None
+        # self._order = None
+        #
 
-        # Append link sid to the target_col->links lookup
-        self._column_links_lookup[target_col_sid].append(new_link.nid)
+        # First we must calculate _num_columns, _num_children, _num_parents
+        # Which then allows _order to be determined
+        for schema_sid, schema in self.schemas.items():
+            schema._num_tables = len(schema.tables)
+            schema._max_num_columns = 0
 
-        # Increment num_parents and num_children accordingly
-        source_table_sid = self._columns[source_col_sid].table_sid
-        target_table_sid = self._columns[target_col_sid].table_sid
+            for table_sid, table in schema.tables.items():
+                table._num_columns = len(table.columns)
+                if table._num_columns > schema._max_num_columns:
+                    schema._max_num_columns = table._num_columns
 
-        self._tables[source_table_sid].num_children += 1
-        self._tables[target_table_sid].num_parents += 1
+                for column_sid, column in table.columns.items():
+
+                    for link_nid, link in column.links.items():
+                        source_schema, source_table, source_column = deconstruct_sid(
+                            column_sid, how="column"
+                        )
+                        target_schema, target_table, target_column = deconstruct_sid(
+                            column_sid, how="column"
+                        )
+
+                        self.schemas[source_schema]._num_children += 1
+                        self.schemas[source_schema].tables[
+                            source_table
+                        ]._num_children += 1
+
+                        self.schemas[target_schema]._num_parents += 1
+                        self.schemas[target_schema].tables[
+                            target_table
+                        ]._num_parents += 1
+
+        # Calculate secondary aggregates
+        for schema_sid, schema in self.schemas.items():
+
+            for table_sid, table in schema.tables.items():
+                table._net_parent = table._num_parents - table._num_children
+
+            schema._net_parent = schema._num_parents - schema._num_children
+
+        # Table ordering
+        for schema_sid, schema in self.schemas.items():
+            sorted_tables = sorted(
+                schema.tables.items(), key=lambda x: x[1]._net_parent, reverse=True
+            )
+
+            for i in range(0, len(sorted_tables)):
+                table_sid = sorted_tables[i][0]
+                schema.tables[table_sid]._order = i + 1
+
+        # Schema ordering
+        sorted_schemas = sorted(
+            self.schemas.items(), key=lambda x: x[1]._net_parent, reverse=True
+        )
+
+        for i in range(0, len(sorted_schemas)):
+            schema_sid = sorted_schemas[i][0]
+            self.schemas[schema_sid]._order = i + 1
 
     def print_snapshot(self, how="pretty"):
         def pretty_print_snapshot(snapshot=self.snapshot):
@@ -174,8 +252,8 @@ class ObjectCollection:
                             for link in links:
                                 print_line(
                                     type="link",
-                                    source_sid=self._links[link["link_id"]].source_sid,
-                                    target_sid=self._links[link["link_id"]].target_sid,
+                                    source_sid=link["source_sid"],
+                                    target_sid=link["target_sid"],
                                 )
 
             print("\n" * line_breaks)
@@ -240,81 +318,85 @@ class ObjectCollection:
         ]
         """
 
-        def determine_table_ordering():
-            # order tables and links
-            ordering_dict = {}
-            for table_sid, table in self._tables.items():
-                ordering_dict[table_sid] = {
-                    "net_parent": table.num_parents - table.num_children
-                }
-
-            # sort by no. parents, then no. children; note the lambda uses a tuple
-            order = 0
-            for table_sid in sorted(
-                ordering_dict,
-                key=lambda k: (ordering_dict[k]["net_parent"]),
-            ):
-                self._tables[table_sid].order = order
-                order += 1
-
         def create_snapshot():
             snapshot = []
-            x_delta = 400
-            y_delta = 150
+
             row_height = 26
-            width_per_text_length = 8
+            width_per_char = 8
 
-            num_per_column = 2
+            schema_int_buffer = 50
+            schema_buffer = 500
 
-            for schema_sid, table_sids in self._schema_tables_lookup.items():
-                schema = self._schemas[schema_sid]
+            for schema_sid, schema in self.schemas.items():
+                schema = self.schemas[schema_sid]
+
+                tables_per_column = max(2, schema._num_tables // 2)
+                table_x_buffer = 700
+                table_y_buffer = 50 + (schema._max_num_columns + 1) * row_height
+
+                schema_x = (schema._order - 1) * schema_buffer
+
+                schema_y = 0
+
+                number_of_columns = math.ceil(schema._num_tables / tables_per_column)
+                schema_width = 350 + (number_of_columns - 1) * table_x_buffer
+                schema_height = schema_int_buffer + (tables_per_column) * table_y_buffer
+
                 schema_snapshot = {
                     "name": schema.sid,
                     "id": schema.nid,
-                    "x": 0,
-                    "y": 0,
-                    "height": 100,
-                    "width": 100,
+                    "x": schema_x,
+                    "y": schema_y,
+                    "height": schema_height,
+                    "width": schema_width,
+                    "color": "#FFFFFF",
                     "tables": [],
                 }
 
-                for table_sid in table_sids:
+                for table_sid, table in schema.tables.items():
+                    table_width = table.max_text_length * width_per_char
 
-                    table = self._tables[table_sid]
                     table_snapshot = {
                         "name": table.name,
                         "id": table.nid,
-                        "order": table.order,
-                        "height": (table.num_columns + 1) * row_height,
-                        "width": table.max_text_length * width_per_text_length,
-                        "x": x_delta + ((table.order // num_per_column) * x_delta),
-                        "y": y_delta + ((table.order % num_per_column) * y_delta),
+                        "order": table._order,
+                        "height": (table._num_columns + 1) * row_height,
+                        "width": table_width,
+                        "x": schema_int_buffer
+                        + ((table._order - 1) // tables_per_column) * table_x_buffer,
+                        "y": schema_int_buffer
+                        + ((table._order - 1) % tables_per_column) * table_y_buffer,
+                        "color": "#FFFFFF",
                         "cols": [],
                     }
 
                     column_counter = 1
                     link_counter = 1
 
-                    for column_sid in self._table_columns_lookup[table_sid]:
+                    for column_sid, column in table.columns.items():
 
-                        column = self._columns[column_sid]
                         column_snapshot = {
                             "name": column.name,
                             "id": column.nid,
                             "width": table_snapshot["width"],
                             "height": row_height,
                             "y": column_counter * row_height,
+                            "color": "#FFFFFF",
                             "links": [],
                         }
 
-                        link_nids = self._column_links_lookup[column_sid]
-                        for link_nid in link_nids:
-                            link = self._links[link_nid]
+                        for link_nid, link in column.links.items():
                             link_snapshot = {
                                 "link_id": link_nid,
-                                "parent_id": self._columns[link.source_sid].nid,
-                                "mx": table_snapshot["x"] - (link_counter * 26),
-                                "my": table_snapshot["y"] + column_snapshot["y"],
+                                "parent_id": self.get_object(link.source_sid).nid,
+                                "mx": schema_snapshot["x"]
+                                + table_snapshot["x"]
+                                - (300 // table._num_columns) * link_counter,
+                                "my": schema_snapshot["y"]
+                                + table_snapshot["y"]
+                                + column_snapshot["y"],
+                                "source_sid": link.source_sid,
+                                "target_sid": link.target_sid,
                             }
                             column_snapshot["links"].append(link_snapshot)
                             link_counter += 1
@@ -328,7 +410,7 @@ class ObjectCollection:
 
             return snapshot
 
-        determine_table_ordering()
+        self.calculate_aggregates()
         self.snapshot = create_snapshot()
         self.print_snapshot(how="raw")
         self.print_snapshot(how="pretty")

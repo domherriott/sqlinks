@@ -5,37 +5,58 @@
 
         <mxCell id="1" parent="0"/>
 
-                {% for schema in snapshot -%}
-                    <mxCell id="{{ schema.id }}" value="{{ schema.name }}" style="swimlane;" vertex="1" parent="1"><mxGeometry x="{{ schema.x }}" y="{{ schema.y }}" width="{{ schema.width }}" height="{{ schema.height }}" as="geometry"/></mxCell>
+        <!--
 
-                    {% for table in schema.tables -%}
-                        <mxCell id="{{ table.id }}" value="{{ table.name }}" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
-                            <mxGeometry x="{{ table.x }}" y="{{ table.y }}" width="{{ table.width }}" height="{{ table.height }}" as="geometry"/>
-                        </mxCell>
+            Order of drawing is:
+            1. Links (as these should sit on top of schemas, but beneath tables & columns)
+            2. Schemas
+            3. Tables
+            4. Columns
 
-                        {% for col in table.cols -%}
+            NB: Indentation below is not for any graphical reason, but purely to show the loops being executed by Jinja
 
-                        <mxCell id="{{ col.id }}" value="{{ col.name }}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="{{ table.id }}">
-                            <mxGeometry y="{{ col.y }}" width="{{ col.width }}" height="{{ col.height }}" as="geometry"/>
-                        </mxCell>
+        -->
 
+        {% for schema in snapshot -%}
 
-                            {% for link in col.links -%}
+            {% for table in schema.tables -%}
 
-                            <mxCell id="{{ link.link_id }}" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="{{ link.parent_id }}" target="{{ col.id }}">
-                            <mxGeometry width="50" height="50" relative="1" as="geometry">
-                                <Array as="points">
-                                    <mxPoint x="{{ link.mx }}" y="{{ link.my }}"/>
-                                </Array>
-                            </mxGeometry>
-                            </mxCell>
+                {% for col in table.cols -%}
 
-                            {% endfor %}
+                    {% for link in col.links -%}
 
-                        {% endfor %}
+                    <mxCell id="{{ link.link_id }}" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="{{ link.parent_id }}" target="{{ col.id }}">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="{{ link.mx }}" y="{{ link.my }}"/>
+                        </Array>
+                    </mxGeometry>
+                    </mxCell>
 
                     {% endfor %}
 
                 {% endfor %}
+
+            {% endfor %}
+
+            <mxCell id="{{ schema.id }}" value="{{ schema.name }}" style="swimlane;fillColor={{ schema.color }}" vertex="1" parent="1"><mxGeometry x="{{ schema.x }}" y="{{ schema.y }}" width="{{ schema.width }}" height="{{ schema.height }}" as="geometry"/></mxCell>
+
+            {% for table in schema.tables -%}
+
+                <mxCell id="{{ table.id }}" value="{{ table.name }}" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor={{ table.color }};horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="{{ schema.id }}">
+                    <mxGeometry x="{{ table.x }}" y="{{ table.y }}" width="{{ table.width }}" height="{{ table.height }}" as="geometry"/>
+                </mxCell>
+
+                {% for col in table.cols -%}
+
+                    <mxCell id="{{ col.id }}" value="{{ col.name }}" style="text;strokeColor=none;fillColor={{ col.color }};align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="{{ table.id }}">
+                        <mxGeometry y="{{ col.y }}" width="{{ col.width }}" height="{{ col.height }}" as="geometry"/>
+                    </mxCell>
+
+                {% endfor %}
+
+            {% endfor %}
+
+        {% endfor %}
             </root>
         </mxGraphModel>
