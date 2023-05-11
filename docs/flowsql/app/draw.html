@@ -30,12 +30,11 @@
 <pre><code class="python">&#34;&#34;&#34;draw.py.&#34;&#34;&#34;
 import pickle
 from jinja2 import Environment, FileSystemLoader
-import os
 import logging
 from pathlib import Path
 
 
-def gen_drawing(tables):
+def gen_drawing(snapshot):
     &#34;&#34;&#34;_summary_
     Args:
         tables (_type_): _description_
@@ -48,7 +47,7 @@ def gen_drawing(tables):
 
     template = env.get_template(&#34;drawio_template.xml&#34;)
 
-    output = template.render(tables=tables)
+    output = template.render(snapshot=snapshot)
     return output
 
 
@@ -62,17 +61,6 @@ def save_drawing(output, output_filename):
         f.write(output)
 
 
-def open_drawing(output_filename):
-    &#34;&#34;&#34;_summary_
-    Args:
-        output_filename (_type_): _description_
-    &#34;&#34;&#34;
-    try:
-        os.system(&#34;open {}&#34;.format(output_filename))
-    except:
-        logging.error(&#34;Unable to open .drawio file&#34;)
-
-
 def save_drawing(output, output_filename):
     &#34;&#34;&#34;_summary_
 
@@ -84,7 +72,7 @@ def save_drawing(output, output_filename):
         f.write(output)
 
 
-def main(working_dir: Path, output_filename: Path):
+def main(collection, output_filename: Path):
     &#34;&#34;&#34;_summary_
 
     Args:
@@ -92,17 +80,10 @@ def main(working_dir: Path, output_filename: Path):
         output_filename (Path): _description_
     &#34;&#34;&#34;
 
-    # reload object from file
-    with open(working_dir / &#34;tables.pkl&#34;, &#34;rb&#34;) as f:
-        tables = pickle.load(f)
-
-    # logging.debug(tables)
-
-    output = gen_drawing(tables)
+    output = gen_drawing(snapshot=collection.snapshot)
     logging.debug(output_filename)
 
-    save_drawing(output, output_filename)
-    open_drawing(output_filename)</code></pre>
+    save_drawing(output, output_filename)</code></pre>
 </details>
 </section>
 <section>
@@ -113,7 +94,7 @@ def main(working_dir: Path, output_filename: Path):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="flowsql.app.draw.gen_drawing"><code class="name flex">
-<span>def <span class="ident">gen_drawing</span></span>(<span>tables)</span>
+<span>def <span class="ident">gen_drawing</span></span>(<span>snapshot)</span>
 </code></dt>
 <dd>
 <div class="desc"><p><em>summary</em></p>
@@ -131,7 +112,7 @@ def main(working_dir: Path, output_filename: Path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def gen_drawing(tables):
+<pre><code class="python">def gen_drawing(snapshot):
     &#34;&#34;&#34;_summary_
     Args:
         tables (_type_): _description_
@@ -144,12 +125,12 @@ def main(working_dir: Path, output_filename: Path):
 
     template = env.get_template(&#34;drawio_template.xml&#34;)
 
-    output = template.render(tables=tables)
+    output = template.render(snapshot=snapshot)
     return output</code></pre>
 </details>
 </dd>
 <dt id="flowsql.app.draw.main"><code class="name flex">
-<span>def <span class="ident">main</span></span>(<span>working_dir: pathlib.Path, output_filename: pathlib.Path)</span>
+<span>def <span class="ident">main</span></span>(<span>collection, output_filename: pathlib.Path)</span>
 </code></dt>
 <dd>
 <div class="desc"><p><em>summary</em></p>
@@ -164,7 +145,7 @@ def main(working_dir: Path, output_filename: Path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def main(working_dir: Path, output_filename: Path):
+<pre><code class="python">def main(collection, output_filename: Path):
     &#34;&#34;&#34;_summary_
 
     Args:
@@ -172,42 +153,10 @@ def main(working_dir: Path, output_filename: Path):
         output_filename (Path): _description_
     &#34;&#34;&#34;
 
-    # reload object from file
-    with open(working_dir / &#34;tables.pkl&#34;, &#34;rb&#34;) as f:
-        tables = pickle.load(f)
-
-    # logging.debug(tables)
-
-    output = gen_drawing(tables)
+    output = gen_drawing(snapshot=collection.snapshot)
     logging.debug(output_filename)
 
-    save_drawing(output, output_filename)
-    open_drawing(output_filename)</code></pre>
-</details>
-</dd>
-<dt id="flowsql.app.draw.open_drawing"><code class="name flex">
-<span>def <span class="ident">open_drawing</span></span>(<span>output_filename)</span>
-</code></dt>
-<dd>
-<div class="desc"><p><em>summary</em></p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>output_filename</code></strong> :&ensp;<code>_type_</code></dt>
-<dd><em>description</em></dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def open_drawing(output_filename):
-    &#34;&#34;&#34;_summary_
-    Args:
-        output_filename (_type_): _description_
-    &#34;&#34;&#34;
-    try:
-        os.system(&#34;open {}&#34;.format(output_filename))
-    except:
-        logging.error(&#34;Unable to open .drawio file&#34;)</code></pre>
+    save_drawing(output, output_filename)</code></pre>
 </details>
 </dd>
 <dt id="flowsql.app.draw.save_drawing"><code class="name flex">
@@ -257,7 +206,6 @@ def main(working_dir: Path, output_filename: Path):
 <ul class="">
 <li><code><a title="flowsql.app.draw.gen_drawing" href="#flowsql.app.draw.gen_drawing">gen_drawing</a></code></li>
 <li><code><a title="flowsql.app.draw.main" href="#flowsql.app.draw.main">main</a></code></li>
-<li><code><a title="flowsql.app.draw.open_drawing" href="#flowsql.app.draw.open_drawing">open_drawing</a></code></li>
 <li><code><a title="flowsql.app.draw.save_drawing" href="#flowsql.app.draw.save_drawing">save_drawing</a></code></li>
 </ul>
 </li>

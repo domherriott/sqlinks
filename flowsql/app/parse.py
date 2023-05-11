@@ -3,123 +3,199 @@ from sql_metadata import Parser
 import json
 import os
 import logging
+import itertools
+
+from flowsql.app.Objects import Collection
+from flowsql.app.helpers import deconstruct_sid
 
 
-def main(path):
+def parse_simple_CTAS_statement(parser, collection: Collection, statement):
+    def get_target_table(statement):
 
-    with open(path, "r") as f:
-        raw = f.read()
+        statement = str(statement)
+        if ("create table" in statement) and ("as" in statement):
+            l = statement.split(" ")
+            target = l[2]
 
-    statements = sqlparse.parse(raw)
+        elif "insert into" in statement:
+            l = statement.split(" ")
+            target = l[2]
+        else:
+            return None, None
 
-    for stat in statements:
-        if stat.get_type() == "CREATE":
+        target_schema, target_table = target.split(".")
 
-            for line in str(stat).split("\n"):
-                if ("CREATE TABLE" in line) and ("AS" in line):
-                    l = line.split(" ")
-                    target_table = l[2]
-                elif "INSERT INTO" in line:
-                    l = line.split(" ")
-                    target_table = l[2]
+        return target_schema, target_table
 
-            split = str(stat).replace("\n", " ").split(" ")
-            split = list(filter(None, split))
+    def get_cols_and_links(parser, target_schema: str, target_table: str):
 
-            res_list = [i for i, value in enumerate(split) if value == "FROM"]
-            if len(res_list) != 0:
-                source_table = split[res_list[-1] + 1]
-                logging.debug(f"SOURCE TABLE: {source_table}")
+        # Source cols =
+        #  Any column named in the parser.columns attribute
+        source_cols = parser.columns
 
-            logging.debug(f"TARGET TABLE: {target_table}")
+        # Target cols =
+        #  Any column named in the parser.columns attribute (remapped to the target table)
+        #  Remapped using the parser.columns_aliases attribute
+        #  You must then add again any duplicated source columns that this time DON'T have an alias.
+        #
+        #  e.g. In this example c.country is picked up as a source column but only once.
+        #       Therefore overlaying the parser.columns_aliases will leave us without a "country"
+        #       column in the target (only "country_2") unless a corrector function is applied.
+        #         SELECT
+        #             c.id,
+        #             c.name as name,
+        #             c.age_int as age,
+        #             c.country as country_2,
+        #             c.country
+        #         FROM spectrum.customers c;
 
-            p = Parser(str(stat))
+        # Aliases is a lookup of target alias -> source
+        aliases = parser.columns_aliases
 
-            # All the alias cols
-            # Therefore those that are additional (so completely new)
-            alias_cols = []
-            if p.columns_aliases_dict != None:
-                for alias in p.columns_aliases_dict["select"]:
-                    alias_cols.append(alias)
-                logging.debug(f"ALIAS COLS: {alias_cols}")
+        # Invert aliases to act as a lookup of source -> target
+        inv_aliases = {v: k for k, v in aliases.items()}
 
-            # All the source cols
-            # Therefore all of these should be in the target table
-            # With the except of those that are used to create an alias
-            source_cols = []
-            for source_col in p.columns_dict["select"]:
-                source_cols.append(source_col)
-            logging.debug(f"SOURCE COLS: {source_cols}")
+        # Create a list of target cols (excl. schema + table)
+        # Replaces source col with alias if present, otherwise takes the source col name
+        target_cols = []
+        links = []
+        for source_col in source_cols:
+            if source_col in inv_aliases:
+                # If a source col is mentioned, and has an alias, then it features in the target table but is renamed
+                # Add schema and table info to target cols
+                target_col = f"{target_schema}.{target_table}.{inv_aliases[source_col]}"
+                target_cols.append(target_col)
 
-            # All the source cols that are used to create an alias
-            # Therefore these should not be in the target table
-            # (But there is a gap here - some cols might be used to create
-            # an alias AND be in the target table)
-            source_cols_for_alias = []
-            for alias in p.columns_aliases:
-                # p.columns_aliases[alias] is either string or "UniqueList" class
-                # depending on if there are multiple source columns
-                if isinstance(p.columns_aliases[alias], str):
-                    source_cols_for_alias.append(p.columns_aliases[alias])
-                else:
-                    for source_col in p.columns_aliases[alias]:
-                        source_cols_for_alias.append(source_col)
-            logging.debug(f"SOURCE COLS FOR ALIAS: {source_cols_for_alias}")
+            else:
+                # If a source col is mentioned, and isn't an alias, then it must feature as a target col with the same name
+                # Add schema and table info to target cols
+                target_col = (
+                    f'{target_schema}.{target_table}.{source_col.split(".")[2]}'
+                )
+                target_cols.append(target_col)
 
-            # Target cols is all the cols in source, minus the ones used to
-            # create an alias (this logic needs work!)
-            target_cols = list(set(alias_cols) - set(source_cols)) + list(
-                set(source_cols) - set(source_cols_for_alias)
-            )
+            # Add links for aliases and non-aliased cols
+            links.append([source_col, target_col])
 
-            # Corrector function for the above loophole
-            # Works by looping through all the source_cols that are used to create an alias
-            # Then looks through the whole script, picking out lines where the source_col features
-            # Then checks to see that the mention of this source_col, is the LAST mention in the line
-            # (And therefore actually the name of the col being pulled through to the target table)
-            # If so it adds it back to target_cols so it is still captured
-            for col in source_cols_for_alias:
-                col_name = col.split(".")[-1]
-                for line in str(stat).split("\n"):
-                    if col_name in line:
-                        split_line = line.replace(".", " ").replace(",", "").split(" ")
-                        res_list = [
-                            i for i, value in enumerate(split_line) if value == col_name
-                        ]
+        all_cols = source_cols + target_cols
 
-                        if len(res_list) != 0:
-                            if res_list[-1] == len(split_line) - 1:
-                                target_cols.append(col)
+        return all_cols, links
 
-            cols = {}
+        # # Corrector function for the above loophole
+        # # Works by looping through all the source_cols that are used to create an alias
+        # # Then looks through the whole script, picking out lines where the source_col features
+        # # Then checks to see that the mention of this source_col, is the LAST mention in the line
+        # # (And therefore actually the name of the col being pulled through to the target table)
+        # # If so it adds it back to target_cols so it is still captured
+        # for col in source_cols_for_alias:
+        #     col_name = col.split(".")[-1]
+        #     for line in str(statement).split("\n"):
+        #         if col_name in line:
+        #             split_line = line.replace(".", " ").replace(",", "").split(" ")
+        #             res_list = [
+        #                 i for i, value in enumerate(split_line) if value == col_name
+        #             ]
 
-            logging.debug(f"P COLUMNS ALIASES: {p.columns_aliases}")
-            logging.debug(f"TARGET COLS: {target_cols}")
+        #             if len(res_list) != 0:
+        #                 if res_list[-1] == len(split_line) - 1:
+        #                     target_cols.append(col)
 
-            for col in target_cols:
-                if col in p.columns_aliases:
-                    target_col_name = target_table + "." + col
-                    if len(p.columns_aliases[col]) != 0:
-                        if isinstance(p.columns_aliases[col], list):
-                            cols[target_col_name] = p.columns_aliases[col]
-                        else:
-                            cols[target_col_name] = [p.columns_aliases[col]]
+    target_schema, target_table = get_target_table(statement=statement)
 
-                else:
-                    target_col_name = target_table + "." + col.split(".")[-1]
+    all_cols, links = get_cols_and_links(
+        parser=parser, target_schema=target_schema, target_table=target_table
+    )
 
-                    if "." not in col:
-                        source_col_name = source_table + "." + col
-                        cols[target_col_name] = [source_col_name]
+    for column_sid in all_cols:
+        schema_sid, table_sid, column_sid = deconstruct_sid(column_sid, how="column")
 
-                    else:
-                        cols[target_col_name] = [col]
+        collection.add_schema(sid=schema_sid)
 
-            output_folder = "working-files"
-            if not os.path.exists(output_folder):
-                os.makedirs(output_folder)
+        schema = collection.schemas[schema_sid]
+        schema.add_table(sid=table_sid, schema_sid=schema_sid)
 
-            output_fn = output_folder + "/" + target_table + ".json"
+        table = schema.tables[table_sid]
+        table.add_column(sid=column_sid, table_sid=table_sid)
 
-            with open(output_fn, "w") as f:
-                json.dump(cols, f, indent=6)
+    for link in links:
+        source_col_sid = link[0]
+        target_col_sid = link[1]
+
+        target_schema_sid, target_table_sid, target_column_sid = deconstruct_sid(
+            target_col_sid, how="column"
+        )
+
+        column = (
+            collection.schemas[target_schema_sid]
+            .tables[target_table_sid]
+            .columns[target_column_sid]
+        )
+        column.add_link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
+
+    return collection
+
+
+def clean(raw):
+    """
+    Clean the statement, returning a list of individual words.
+
+    Args:
+        statement (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # Remove new lines to negate different formats
+    clean = str(raw).lower()
+    clean = clean.replace("\n", " ")
+    clean = clean.replace("\t", " ")
+
+    # statement = statement.split(' ')
+    # statement = [s for s in statement if s != '']
+    return clean
+
+
+def add_to_collection(collection, statements):
+
+    # Looping through all SQL statements in the file, determine what type of statement it is. Add to mapping file accordingly.
+    for statement in statements:
+        statement_type = statement.get_type()
+
+        if statement_type == "UNKNOWN":
+            continue
+
+        parser = Parser(str(statement))
+
+        flag_creates_temporary_table = "create temporary table" in str(statement)
+        flag_contains_as_select = "as select" in str(statement)
+
+        if statement_type == "CREATE":
+            if flag_creates_temporary_table:
+                # TODO: Currently doesn't support temporary tables
+                continue
+
+            elif len(parser.with_names) == 0 and flag_contains_as_select:
+                collection = parse_simple_CTAS_statement(
+                    parser=parser, collection=collection, statement=statement
+                )
+
+        # TODO: Insert other SQL statements here...
+
+    return collection
+
+
+def main(collection: Collection, path):
+
+    try:
+        with open(path, "r") as f:
+            print(path)
+            raw = f.read()
+    except:
+        print(f"WARNING: Encoding failure {path}")
+        return collection
+
+    statements = sqlparse.parse(clean(raw))
+
+    collection = add_to_collection(collection=collection, statements=statements)
+
+    return collection

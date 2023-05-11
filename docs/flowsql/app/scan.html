@@ -41,7 +41,12 @@ def main(path):
             if name.lower().endswith(&#34;sql&#34;):
                 relative_path = os.path.join(dirpath, name)
                 absolute_path = os.path.abspath(relative_path)
-                paths.append(Path(absolute_path))
+                paths.append(
+                    {
+                        &#34;absolute_path&#34;: Path(absolute_path),
+                        &#34;relative_path&#34;: Path(relative_path),
+                    }
+                )
 
     return paths</code></pre>
 </details>
@@ -73,7 +78,12 @@ def main(path):
             if name.lower().endswith(&#34;sql&#34;):
                 relative_path = os.path.join(dirpath, name)
                 absolute_path = os.path.abspath(relative_path)
-                paths.append(Path(absolute_path))
+                paths.append(
+                    {
+                        &#34;absolute_path&#34;: Path(absolute_path),
+                        &#34;relative_path&#34;: Path(relative_path),
+                    }
+                )
 
     return paths</code></pre>
 </details>

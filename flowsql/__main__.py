@@ -3,31 +3,41 @@ import logging
 import os
 from pathlib import Path
 
+from flowsql.app.Objects import Collection
+
 import flowsql.app.parse as parse
 import flowsql.app.populate as populate
 import flowsql.app.draw as draw
 import flowsql.app.scan as scan
+import flowsql.app.open as open
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "-p", "--path", default=".", help="Path to scan across | Default value = ."
-)
-parser.add_argument(
-    "-o",
-    "--output",
-    default=".",
-    help="Path to output diagrams | Set to 'REL' to save adjacent to scripts | Default value = .",
-)
+def get_args():
+    """_summary_
 
-parser.add_argument(
-    "-l",
-    "--logging",
-    default="debug",  # TODO : Update to "error"
-    help="Set the level of logging messages to receive | Options are [debug, info, warning, error, critical] | Default value = debug",
-)
+    Returns:
+        _type_: _description_
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p", "--path", default=".", help="Path to scan across | Default value = ."
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default=".",
+        help="Path to output diagrams | Set to 'REL' to save adjacent to scripts | Default value = .",
+    )
 
-args = parser.parse_args()
+    parser.add_argument(
+        "-l",
+        "--logging",
+        default="debug",  # TODO : Update to "error"
+        help="Set the level of logging messages to receive | Options are [debug, info, warning, error, critical] | Default value = debug",
+    )
+
+    args = parser.parse_args()
+    return args
 
 
 def set_logger(logging_level: str):
@@ -58,13 +68,6 @@ def setup(working_dir: Path):
     os.makedirs(working_dir, exist_ok=True)
 
 
-def open_drawing(output_filename: Path):
-    try:
-        os.system("open {}".format(output_filename))
-    except:
-        logging.error("Unable to open .drawio file")
-
-
 def cleanup(working_dir: Path):
     """
     Cleanup working environment
@@ -76,23 +79,33 @@ def cleanup(working_dir: Path):
 
 
 if __name__ == "__main__":
+    args = get_args()
+    print(args)
     set_logger(args.logging)
 
     working_dir = Path("./working-files/")
-    output_filename = args.output + "/output.drawio"
+    output_filename = Path(args.output + "/output.drawio")
 
     setup(working_dir=working_dir)
 
     paths = scan.main(args.path)
 
+    # Instantiate empty ObjectCollection
+    schemas = Collection()
+
     for i in range(0, len(paths)):
         path = paths[i]
-        logging.info(f"Processing file {i+1} of {len(paths)}: {path}")
-        parse.main(path)
+        print(f"Processing file {i+1} of {len(paths)}: {path['relative_path']}")
+        schemas = parse.main(collection=schemas, path=path["absolute_path"])
 
-    populate.main(working_dir=working_dir)
-    draw.main(output_filename=output_filename, working_dir=working_dir)
+    schemas.create_snapshot()
+
+    print("Generating diagram...")
+
+    # populate.main(collection=collection)
+
+    draw.main(output_filename=output_filename, collection=schemas)
 
     cleanup(working_dir=working_dir)
 
-    open_drawing(output_filename)
+    open.open_drawing(output_filename)
