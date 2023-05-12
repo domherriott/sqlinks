@@ -24,12 +24,12 @@ Documenting data pipelines is hard. Not only is it complex, but it's also time c
 
 ## Features
 
-👍 Generate flow diagrams from simple CTAS statements
-👍 Visualise interactions of schemas, tables & columns
+- 👍 Generate flow diagrams from simple CTAS statements
+- 👍 Visualise interactions of schemas, tables & columns
 
 To come...
-⏳ Functionality for complex CTAS statements, CTEs, INSERT statements etc.
-⏳ Customisation via config files
+- ⏳ Functionality for complex CTAS statements, CTEs, INSERT statements etc.
+- ⏳ Customisation via config files
 
 
 ## Example
