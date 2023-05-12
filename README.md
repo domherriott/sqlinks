@@ -24,34 +24,17 @@ Documenting data pipelines is hard. Not only is it complex, but it's also time c
 
 ## Features
 
-* Generate flow diagrams from `.sql` files
+👍 Generate flow diagrams from simple CTAS statements
+👍 Visualise interactions of schemas, tables & columns
+
+To come...
+⏳ Functionality for complex CTAS statements, CTEs, INSERT statements etc.
+⏳ Customisation via config files
 
 
 ## Example
 
-1. Starting with a standard `.sql` file, the first step would be then be to run the module on the command line:
-
-    <p align="center">
-    <img src = "images/example-sql.png" width=300>
-    </p>
-
-    <p align="center">
-    <img src = "images/example-terminal.png" width=300>
-    </p>
-
-1. After running the command a GUI window will appear. At this stage enter the path of your `.sql` file. When ready, hit the `Run` button!
-
-    <p align="center">
-    <img src = "images/example-gui.png" width=300>
-    </p>
-
-1. The program will then analyse the SQL code and generate a [diagrams.net](diagrams.net) diagram. It will save this file in the `./output/` folder and also try and open it (although this requires a local version of `draw.io` to be installed).
-
-    <p align="center">
-    <img src = "images/example-diagram.png" width=900>
-    </p>
-
-
+Coming soon...
 
 
 ## Feedback
