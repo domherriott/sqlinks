@@ -1,8 +1,8 @@
 """draw.py."""
-import pickle
 from jinja2 import Environment, FileSystemLoader
 import logging
 from pathlib import Path
+import os
 
 
 def gen_drawing(snapshot):
@@ -13,7 +13,7 @@ def gen_drawing(snapshot):
     Returns:
         _type_: _description_
     """
-    file_loader = FileSystemLoader("flowsql/app/templates")
+    file_loader = FileSystemLoader(Path(__file__).parent / "templates/")
     env = Environment(loader=file_loader)
 
     template = env.get_template("drawio_template.xml")

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = "0.0.2"
+VERSION = "0.0.1"
 DESCRIPTION = "Streaming video data via networks"
 LONG_DESCRIPTION = (
     "A package that allows to build simple streams of video, audio and camera data."
@@ -16,7 +16,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    install_requires=[],
+    install_requires=["sqlparse", "sql_metadata", "jinja2"],
     keywords=["python", "documentation", "sql"],
     classifiers=[
         "Development Status :: 1 - Planning",
