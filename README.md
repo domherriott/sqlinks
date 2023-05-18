@@ -23,7 +23,7 @@
 
 ## Introduction
 
-Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation becomes out of date as soon as it's completed as there's continuous change. **flowsql** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable, clear diagrams, which are built with [diagrams.net](diagrams.net) so are also easily shared and edited.
+Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation is out of date as soon as it's completed as there's continual change. **flowsql** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable and clear diagrams that, by using [diagrams.net](diagrams.net), are also easily accessible by non-technical users.
 
 
 ## Features
