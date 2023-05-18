@@ -1,9 +1,5 @@
 import sqlparse
 from sql_metadata import Parser
-import json
-import os
-import logging
-import itertools
 
 from flowsql.app.Objects import Collection
 from flowsql.app.helpers import deconstruct_sid

@@ -5,11 +5,11 @@ from pathlib import Path
 
 from flowsql.app.Objects import Collection
 
-import flowsql.app.parse as parse
-import flowsql.app.populate as populate
-import flowsql.app.draw as draw
-import flowsql.app.scan as scan
-import flowsql.app.open as open
+from flowsql.app import parse as parse
+from flowsql.app import populate as populate
+from flowsql.app import draw as draw
+from flowsql.app import scan as scan
+from flowsql.app import open as open
 
 
 def get_args():

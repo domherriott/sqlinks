@@ -11,11 +11,15 @@
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Features](#features)
 - [Example](#example)
 - [Feedback](#feedback)
 - [Acknowledgments](#acknowledgments)
+- [Dev](#dev)
+- [Deflation](#deflation)
+  - [](#)
 
 ## Introduction
 
@@ -55,3 +59,8 @@ run `pre-commit install` to set up the git hook scripts
 https://drawio-app.com/extracting-the-xml-from-mxfiles/
 
 https://jgraph.github.io/drawio-tools/tools/convert.html
+
+###
+
+Build dist files
+`python setup.py sdist bdist_wheel`
