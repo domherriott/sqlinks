@@ -64,3 +64,6 @@ https://jgraph.github.io/drawio-tools/tools/convert.html
 
 Build dist files
 `python setup.py sdist bdist_wheel`
+
+Push to PyPI
+`python -m twine upload --repository testpypi dist/*`
