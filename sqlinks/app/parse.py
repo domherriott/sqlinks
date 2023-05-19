@@ -1,8 +1,8 @@
 import sqlparse
 from sql_metadata import Parser
 
-from flowsql.app.Objects import Collection
-from flowsql.app.helpers import deconstruct_sid
+from sqlinks.app.Objects import Collection
+from sqlinks.app.helpers import deconstruct_sid
 
 
 def parse_simple_CTAS_statement(parser, collection: Collection, statement):

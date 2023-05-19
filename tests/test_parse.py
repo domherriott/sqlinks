@@ -1,1 +1,1 @@
-from flowsql.app import parse as parse
+from sqlinks.app import parse as parse

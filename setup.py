@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 VERSION = "0.0.1"
 DESCRIPTION = "Streaming video data via networks"
-LONG_DESCRIPTION = "Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation is out of date as soon as it's completed as there's continual change. **flowsql** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable and clear diagrams that, by using [diagrams.net](diagrams.net), are also easily accessible by non-technical users."
+LONG_DESCRIPTION = "Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation is out of date as soon as it's completed as there's continual change. **sqlinks** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable and clear diagrams that, by using [diagrams.net](diagrams.net), are also easily accessible by non-technical users."
 
 # Setting up
 setup(
-    name="flowsql",
+    name="sqlinks",
     version=VERSION,
     author="Dominic Herriott",
     author_email="dominicherriott@outlook.com",
@@ -24,5 +24,5 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
     ],
-    package_data={"flowsql": ["app/templates/*.xml"]},
+    package_data={"sqlinks": ["app/templates/*.xml"]},
 )

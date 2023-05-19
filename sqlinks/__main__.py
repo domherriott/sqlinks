@@ -3,13 +3,13 @@ import logging
 import os
 from pathlib import Path
 
-from flowsql.app.Objects import Collection
+from sqlinks.app.Objects import Collection
 
-from flowsql.app import parse as parse
-from flowsql.app import populate as populate
-from flowsql.app import draw as draw
-from flowsql.app import scan as scan
-from flowsql.app import open as open
+from sqlinks.app import parse as parse
+from sqlinks.app import populate as populate
+from sqlinks.app import draw as draw
+from sqlinks.app import scan as scan
+from sqlinks.app import open as open
 
 
 def get_args():

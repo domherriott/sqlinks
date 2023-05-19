@@ -1,6 +1,6 @@
 import pprint
 import math
-from flowsql.app.helpers import deconstruct_sid
+from sqlinks.app.helpers import deconstruct_sid
 
 
 class Object:

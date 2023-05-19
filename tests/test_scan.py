@@ -1,4 +1,4 @@
-from flowsql.app import scan as scan
+from sqlinks.app import scan as scan
 
 
 def test_scan_count():

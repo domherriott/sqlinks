@@ -1,7 +1,7 @@
-<h1 align="center">flowsql</h1> <br>
+<h1 align="center">sqlinks</h1> <br>
 <p align="center">
   <a href="">
-    <img alt="flowsql" title="flowsql" src="images/logo.png" width="250">
+    <img alt="sqlinks" title="sqlinks" src="images/logo.png" width="250">
   </a>
 </p>
 
@@ -23,7 +23,7 @@
 
 ## Introduction
 
-Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation is out of date as soon as it's completed as there's continual change. **flowsql** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable and clear diagrams that, by using [diagrams.net](diagrams.net), are also easily accessible by non-technical users.
+Documenting data pipelines is hard. Not only is it complex, but it's also time consuming. When working with big teams it becomes near impossible; documentation is out of date as soon as it's completed as there's continual change. **sqlinks** hopes to remedy this by allowing you to generate flow diagrams programatically. This allows for reproducable and clear diagrams that, by using [diagrams.net](diagrams.net), are also easily accessible by non-technical users.
 
 
 ## Features
@@ -43,7 +43,7 @@ Coming soon...
 
 ## Feedback
 
-Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/dominic-herriott/) and please use [GitHub Issues](https://github.com/domherriott/flowsql/issues) for feature requests! :grinning:
+Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/dominic-herriott/) and please use [GitHub Issues](https://github.com/domherriott/sqlinks/issues) for feature requests! :grinning:
 
 ## Acknowledgments
 
