@@ -1,0 +1,1513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sqlinks.app.Objects API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sqlinks.app.Objects</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import pprint
+import math
+from sqlinks.app.helpers import deconstruct_sid
+
+
+class Object:
+    object_counter = 1000
+
+    def __init__(self, sid):
+        # String ID
+        self.sid = sid
+        # Numerical ID
+        self.nid = Object.object_counter
+        Object.object_counter += 1
+
+
+class Schema(Object):
+    def __init__(self, sid: str):
+        Object.__init__(self, sid)
+        self.name = sid
+        self.tables = {}
+
+        # Aggregates to be calculated later on
+        self._num_tables = 0
+        self._num_children = 0
+        self._num_parents = 0
+        self._order = None
+
+    def add_table(self, sid: str, schema_sid: int):
+        if sid in self.tables:
+            return
+
+        self.tables[sid] = Table(sid=sid, schema_sid=schema_sid)
+
+
+class Table(Object):
+    def __init__(self, sid: str, schema_sid: str):
+        Object.__init__(self, sid)
+        self.schema_sid = schema_sid
+        self.name = sid.split(&#34;.&#34;)[1]
+        self.max_text_length = len(self.name)
+
+        self.columns = {}
+
+        # Aggregates to be calculated later on
+        self._num_columns = 0
+        self._num_children = 0
+        self._num_parents = 0
+        self._order = None
+
+    def add_column(self, sid: str, table_sid: int):
+        if sid in self.columns:
+            return
+
+        new_column = Column(sid=sid, table_sid=table_sid)
+        self.columns[sid] = new_column
+
+        column_name_len = len(sid.split(&#34;.&#34;)[2])
+        if column_name_len &gt; self.max_text_length:
+            self.max_text_length = column_name_len
+
+
+class Column(Object):
+    def __init__(self, sid: str, table_sid: str):
+        Object.__init__(self, sid)
+        self.table_sid = table_sid
+        self.name = sid.split(&#34;.&#34;)[2]
+
+        # Links are associated by the target column
+        self.links = {}
+
+    def add_link(self, source_col_sid: int, target_col_sid: int):
+        new_link = Link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
+        self.links[new_link.nid] = new_link
+
+
+class Link(Object):
+    def __init__(self, source_col_sid: str, target_col_sid: str):
+        Object.__init__(self, sid=None)
+        self.source_sid = source_col_sid
+        self.target_sid = target_col_sid
+
+
+class Collection:
+    def __init__(self):
+        self.schemas = {}
+
+    def add_schema(self, sid: str):
+        print(sid, self.schemas)
+        if sid in self.schemas:
+            return
+        self.schemas[sid] = Schema(sid=sid)
+
+    def get_object(self, sid: str):
+        dot_count = sid.count(&#34;.&#34;)
+
+        if dot_count == 0:
+            try:
+                object = self.schemas[sid]
+            except:
+                return None
+
+        elif dot_count == 1:
+            schema, table = deconstruct_sid(sid, how=&#34;table&#34;)
+            try:
+                object = self.schemas[schema].tables[table]
+            except:
+                return None
+
+        elif dot_count == 2:
+            schema, table, column = deconstruct_sid(sid, how=&#34;column&#34;)
+            try:
+                object = self.schemas[schema].tables[table].columns[column]
+            except:
+                return None
+
+        return object
+
+    def calculate_aggregates(self):
+
+        # Calculating these aggregates for both Schema &amp; Table
+        #
+        # self._num_columns = None
+        # self._num_children = None
+        # self._num_parents = None
+        # self._order = None
+        #
+
+        # First we must calculate _num_columns, _num_children, _num_parents
+        # Which then allows _order to be determined
+        for schema_sid, schema in self.schemas.items():
+            schema._num_tables = len(schema.tables)
+            schema._max_num_columns = 0
+
+            for table_sid, table in schema.tables.items():
+                table._num_columns = len(table.columns)
+                if table._num_columns &gt; schema._max_num_columns:
+                    schema._max_num_columns = table._num_columns
+
+                for column_sid, column in table.columns.items():
+
+                    for link_nid, link in column.links.items():
+                        source_schema, source_table, source_column = deconstruct_sid(
+                            column_sid, how=&#34;column&#34;
+                        )
+                        target_schema, target_table, target_column = deconstruct_sid(
+                            column_sid, how=&#34;column&#34;
+                        )
+
+                        self.schemas[source_schema]._num_children += 1
+                        self.schemas[source_schema].tables[
+                            source_table
+                        ]._num_children += 1
+
+                        self.schemas[target_schema]._num_parents += 1
+                        self.schemas[target_schema].tables[
+                            target_table
+                        ]._num_parents += 1
+
+        # Calculate secondary aggregates
+        for schema_sid, schema in self.schemas.items():
+
+            for table_sid, table in schema.tables.items():
+                table._net_parent = table._num_parents - table._num_children
+
+            schema._net_parent = schema._num_parents - schema._num_children
+
+        # Table ordering
+        for schema_sid, schema in self.schemas.items():
+            sorted_tables = sorted(
+                schema.tables.items(), key=lambda x: x[1]._net_parent, reverse=True
+            )
+
+            for i in range(0, len(sorted_tables)):
+                table_sid = sorted_tables[i][0]
+                schema.tables[table_sid]._order = i + 1
+
+        # Schema ordering
+        sorted_schemas = sorted(
+            self.schemas.items(), key=lambda x: x[1]._net_parent, reverse=True
+        )
+
+        for i in range(0, len(sorted_schemas)):
+            schema_sid = sorted_schemas[i][0]
+            self.schemas[schema_sid]._order = i + 1
+
+    def print_snapshot(self, how=&#34;pretty&#34;):
+        def pretty_print_snapshot(snapshot=self.snapshot):
+
+            line_breaks = 3
+            schema_offset = 2
+            table_offset = 3
+            whole_line = 100
+            column_width = (whole_line - table_offset) // 2
+
+            def print_line(type=None, text=&#34;&#34;, source_sid=None, target_sid=None):
+
+                if type == &#34;schema&#34;:
+                    print(&#34;\n&#34; * line_breaks)
+                    print(&#34; &#34; * schema_offset + &#34;#&#34; * whole_line)
+                    buffer = 3
+                    offset = len(text) // 2
+                    print(&#34; &#34; * schema_offset + &#34; &#34; * (column_width - offset) + text)
+                    print(&#34; &#34; * schema_offset + &#34;#&#34; * whole_line)
+
+                elif type == &#34;table&#34;:
+                    print()
+                    print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+                    offset = len(text) // 2
+                    print(
+                        &#34; &#34; * table_offset
+                        + &#34;|&#34;
+                        + &#34; &#34; * (column_width - offset)
+                        + text
+                        + &#34; &#34; * (column_width - (len(text) - offset))
+                        + &#34;|&#34;
+                    )
+                    print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+
+                elif type == &#34;link&#34;:
+                    print(
+                        &#34; &#34; * table_offset
+                        + &#34;|&#34;
+                        + source_sid
+                        + &#34; &#34; * (column_width - len(source_sid) - 2)
+                        + &#34;-&gt;&#34;
+                        + &#34; &#34; * (column_width - len(target_sid))
+                        + target_sid
+                        + &#34;|&#34;
+                    )
+                    print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+
+            for schema in snapshot:
+                schema_sid = schema[&#34;name&#34;]
+                print_line(type=&#34;schema&#34;, text=schema_sid)
+
+                for table in schema[&#34;tables&#34;]:
+                    table_sid = table[&#34;name&#34;]
+                    print_line(type=&#34;table&#34;, text=table_sid)
+
+                    for column in table[&#34;cols&#34;]:
+                        column_sid = column[&#34;name&#34;]
+
+                        links = column[&#34;links&#34;]
+
+                        if links == []:
+                            print_line(
+                                type=&#34;link&#34;, source_sid=&#34;&#34;, target_sid=column_sid
+                            )
+
+                        else:
+                            for link in links:
+                                print_line(
+                                    type=&#34;link&#34;,
+                                    source_sid=link[&#34;source_sid&#34;],
+                                    target_sid=link[&#34;target_sid&#34;],
+                                )
+
+            print(&#34;\n&#34; * line_breaks)
+
+        if how == &#34;raw&#34;:
+            pprint.pprint(self.snapshot)
+        elif how == &#34;pretty&#34;:
+            pretty_print_snapshot()
+
+    def create_snapshot(self):
+        &#34;&#34;&#34;
+        snapshot is the desired end state. This is what is used as an input to Jinja to create the
+        draw.io diagram.
+        snapshot = [
+            {
+                &#39;name&#39;:&#39;stage.reference_rts&#39;,
+                &#39;id&#39;:3,
+                &#39;x&#39;:900,
+                &#39;cols&#39;:[
+                    {
+                        &#39;name&#39;:&#39;region&#39;,
+                        &#39;id&#39;:301,
+                        &#39;y&#39;:26,
+                        &#39;links&#39;:[]
+                    },
+                    {
+                        &#39;name&#39;:&#39;county&#39;,
+                        &#39;id&#39;:302,
+                        &#39;y&#39;:52,
+                        &#39;links&#39;:[{
+                                &#39;link_id&#39;:900,
+                                &#39;parent_id&#39;:402
+                            }]
+                    },
+                    {
+                        &#39;name&#39;:&#39;indoor_outdoor&#39;,
+                        &#39;id&#39;:303,
+                        &#39;y&#39;:78,
+                        &#39;links&#39;:[]
+                    }
+                ]
+            },
+            {
+                &#39;name&#39;:&#39;reporting.reference_postcode&#39;,
+                &#39;id&#39;:4,
+                &#39;x&#39;: 300,
+                &#39;cols&#39;:[
+                    {
+                        &#39;name&#39;:&#39;region_name&#39;,
+                        &#39;id&#39;:401,
+                        &#39;y&#39;:26,
+                        &#39;links&#39;:[]
+                    },
+                    {
+                        &#39;name&#39;:&#39;county_name&#39;,
+                        &#39;id&#39;:402,
+                        &#39;y&#39;:52,
+                        &#39;links&#39;:[]
+                    }
+                ]
+            }
+        ]
+        &#34;&#34;&#34;
+
+        def create_snapshot():
+            snapshot = []
+
+            row_height = 26
+            width_per_char = 8
+
+            schema_int_buffer = 50
+            schema_buffer = 500
+
+            for schema_sid, schema in self.schemas.items():
+                schema = self.schemas[schema_sid]
+
+                tables_per_column = max(2, schema._num_tables // 2)
+                table_x_buffer = 700
+                table_y_buffer = 50 + (schema._max_num_columns + 1) * row_height
+
+                schema_x = (schema._order - 1) * schema_buffer
+
+                schema_y = 0
+
+                number_of_columns = math.ceil(schema._num_tables / tables_per_column)
+                schema_width = 350 + (number_of_columns - 1) * table_x_buffer
+                schema_height = schema_int_buffer + (tables_per_column) * table_y_buffer
+
+                schema_snapshot = {
+                    &#34;name&#34;: schema.sid,
+                    &#34;id&#34;: schema.nid,
+                    &#34;x&#34;: schema_x,
+                    &#34;y&#34;: schema_y,
+                    &#34;height&#34;: schema_height,
+                    &#34;width&#34;: schema_width,
+                    &#34;color&#34;: &#34;#FFFFFF&#34;,
+                    &#34;tables&#34;: [],
+                }
+
+                for table_sid, table in schema.tables.items():
+                    table_width = table.max_text_length * width_per_char
+
+                    table_snapshot = {
+                        &#34;name&#34;: table.name,
+                        &#34;id&#34;: table.nid,
+                        &#34;order&#34;: table._order,
+                        &#34;height&#34;: (table._num_columns + 1) * row_height,
+                        &#34;width&#34;: table_width,
+                        &#34;x&#34;: schema_int_buffer
+                        + ((table._order - 1) // tables_per_column) * table_x_buffer,
+                        &#34;y&#34;: schema_int_buffer
+                        + ((table._order - 1) % tables_per_column) * table_y_buffer,
+                        &#34;color&#34;: &#34;#FFFFFF&#34;,
+                        &#34;cols&#34;: [],
+                    }
+
+                    column_counter = 1
+                    link_counter = 1
+
+                    for column_sid, column in table.columns.items():
+
+                        column_snapshot = {
+                            &#34;name&#34;: column.name,
+                            &#34;id&#34;: column.nid,
+                            &#34;width&#34;: table_snapshot[&#34;width&#34;],
+                            &#34;height&#34;: row_height,
+                            &#34;y&#34;: column_counter * row_height,
+                            &#34;color&#34;: &#34;#FFFFFF&#34;,
+                            &#34;links&#34;: [],
+                        }
+
+                        for link_nid, link in column.links.items():
+                            link_snapshot = {
+                                &#34;link_id&#34;: link_nid,
+                                &#34;parent_id&#34;: self.get_object(link.source_sid).nid,
+                                &#34;mx&#34;: schema_snapshot[&#34;x&#34;]
+                                + table_snapshot[&#34;x&#34;]
+                                - (300 // table._num_columns) * link_counter,
+                                &#34;my&#34;: schema_snapshot[&#34;y&#34;]
+                                + table_snapshot[&#34;y&#34;]
+                                + column_snapshot[&#34;y&#34;],
+                                &#34;source_sid&#34;: link.source_sid,
+                                &#34;target_sid&#34;: link.target_sid,
+                            }
+                            column_snapshot[&#34;links&#34;].append(link_snapshot)
+                            link_counter += 1
+
+                        table_snapshot[&#34;cols&#34;].append(column_snapshot)
+                        column_counter += 1
+
+                    schema_snapshot[&#34;tables&#34;].append(table_snapshot)
+
+                snapshot.append(schema_snapshot)
+
+            return snapshot
+
+        self.calculate_aggregates()
+        self.snapshot = create_snapshot()
+        self.print_snapshot(how=&#34;raw&#34;)
+        self.print_snapshot(how=&#34;pretty&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sqlinks.app.Objects.Collection"><code class="flex name class">
+<span>class <span class="ident">Collection</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Collection:
+    def __init__(self):
+        self.schemas = {}
+
+    def add_schema(self, sid: str):
+        print(sid, self.schemas)
+        if sid in self.schemas:
+            return
+        self.schemas[sid] = Schema(sid=sid)
+
+    def get_object(self, sid: str):
+        dot_count = sid.count(&#34;.&#34;)
+
+        if dot_count == 0:
+            try:
+                object = self.schemas[sid]
+            except:
+                return None
+
+        elif dot_count == 1:
+            schema, table = deconstruct_sid(sid, how=&#34;table&#34;)
+            try:
+                object = self.schemas[schema].tables[table]
+            except:
+                return None
+
+        elif dot_count == 2:
+            schema, table, column = deconstruct_sid(sid, how=&#34;column&#34;)
+            try:
+                object = self.schemas[schema].tables[table].columns[column]
+            except:
+                return None
+
+        return object
+
+    def calculate_aggregates(self):
+
+        # Calculating these aggregates for both Schema &amp; Table
+        #
+        # self._num_columns = None
+        # self._num_children = None
+        # self._num_parents = None
+        # self._order = None
+        #
+
+        # First we must calculate _num_columns, _num_children, _num_parents
+        # Which then allows _order to be determined
+        for schema_sid, schema in self.schemas.items():
+            schema._num_tables = len(schema.tables)
+            schema._max_num_columns = 0
+
+            for table_sid, table in schema.tables.items():
+                table._num_columns = len(table.columns)
+                if table._num_columns &gt; schema._max_num_columns:
+                    schema._max_num_columns = table._num_columns
+
+                for column_sid, column in table.columns.items():
+
+                    for link_nid, link in column.links.items():
+                        source_schema, source_table, source_column = deconstruct_sid(
+                            column_sid, how=&#34;column&#34;
+                        )
+                        target_schema, target_table, target_column = deconstruct_sid(
+                            column_sid, how=&#34;column&#34;
+                        )
+
+                        self.schemas[source_schema]._num_children += 1
+                        self.schemas[source_schema].tables[
+                            source_table
+                        ]._num_children += 1
+
+                        self.schemas[target_schema]._num_parents += 1
+                        self.schemas[target_schema].tables[
+                            target_table
+                        ]._num_parents += 1
+
+        # Calculate secondary aggregates
+        for schema_sid, schema in self.schemas.items():
+
+            for table_sid, table in schema.tables.items():
+                table._net_parent = table._num_parents - table._num_children
+
+            schema._net_parent = schema._num_parents - schema._num_children
+
+        # Table ordering
+        for schema_sid, schema in self.schemas.items():
+            sorted_tables = sorted(
+                schema.tables.items(), key=lambda x: x[1]._net_parent, reverse=True
+            )
+
+            for i in range(0, len(sorted_tables)):
+                table_sid = sorted_tables[i][0]
+                schema.tables[table_sid]._order = i + 1
+
+        # Schema ordering
+        sorted_schemas = sorted(
+            self.schemas.items(), key=lambda x: x[1]._net_parent, reverse=True
+        )
+
+        for i in range(0, len(sorted_schemas)):
+            schema_sid = sorted_schemas[i][0]
+            self.schemas[schema_sid]._order = i + 1
+
+    def print_snapshot(self, how=&#34;pretty&#34;):
+        def pretty_print_snapshot(snapshot=self.snapshot):
+
+            line_breaks = 3
+            schema_offset = 2
+            table_offset = 3
+            whole_line = 100
+            column_width = (whole_line - table_offset) // 2
+
+            def print_line(type=None, text=&#34;&#34;, source_sid=None, target_sid=None):
+
+                if type == &#34;schema&#34;:
+                    print(&#34;\n&#34; * line_breaks)
+                    print(&#34; &#34; * schema_offset + &#34;#&#34; * whole_line)
+                    buffer = 3
+                    offset = len(text) // 2
+                    print(&#34; &#34; * schema_offset + &#34; &#34; * (column_width - offset) + text)
+                    print(&#34; &#34; * schema_offset + &#34;#&#34; * whole_line)
+
+                elif type == &#34;table&#34;:
+                    print()
+                    print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+                    offset = len(text) // 2
+                    print(
+                        &#34; &#34; * table_offset
+                        + &#34;|&#34;
+                        + &#34; &#34; * (column_width - offset)
+                        + text
+                        + &#34; &#34; * (column_width - (len(text) - offset))
+                        + &#34;|&#34;
+                    )
+                    print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+
+                elif type == &#34;link&#34;:
+                    print(
+                        &#34; &#34; * table_offset
+                        + &#34;|&#34;
+                        + source_sid
+                        + &#34; &#34; * (column_width - len(source_sid) - 2)
+                        + &#34;-&gt;&#34;
+                        + &#34; &#34; * (column_width - len(target_sid))
+                        + target_sid
+                        + &#34;|&#34;
+                    )
+                    print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+
+            for schema in snapshot:
+                schema_sid = schema[&#34;name&#34;]
+                print_line(type=&#34;schema&#34;, text=schema_sid)
+
+                for table in schema[&#34;tables&#34;]:
+                    table_sid = table[&#34;name&#34;]
+                    print_line(type=&#34;table&#34;, text=table_sid)
+
+                    for column in table[&#34;cols&#34;]:
+                        column_sid = column[&#34;name&#34;]
+
+                        links = column[&#34;links&#34;]
+
+                        if links == []:
+                            print_line(
+                                type=&#34;link&#34;, source_sid=&#34;&#34;, target_sid=column_sid
+                            )
+
+                        else:
+                            for link in links:
+                                print_line(
+                                    type=&#34;link&#34;,
+                                    source_sid=link[&#34;source_sid&#34;],
+                                    target_sid=link[&#34;target_sid&#34;],
+                                )
+
+            print(&#34;\n&#34; * line_breaks)
+
+        if how == &#34;raw&#34;:
+            pprint.pprint(self.snapshot)
+        elif how == &#34;pretty&#34;:
+            pretty_print_snapshot()
+
+    def create_snapshot(self):
+        &#34;&#34;&#34;
+        snapshot is the desired end state. This is what is used as an input to Jinja to create the
+        draw.io diagram.
+        snapshot = [
+            {
+                &#39;name&#39;:&#39;stage.reference_rts&#39;,
+                &#39;id&#39;:3,
+                &#39;x&#39;:900,
+                &#39;cols&#39;:[
+                    {
+                        &#39;name&#39;:&#39;region&#39;,
+                        &#39;id&#39;:301,
+                        &#39;y&#39;:26,
+                        &#39;links&#39;:[]
+                    },
+                    {
+                        &#39;name&#39;:&#39;county&#39;,
+                        &#39;id&#39;:302,
+                        &#39;y&#39;:52,
+                        &#39;links&#39;:[{
+                                &#39;link_id&#39;:900,
+                                &#39;parent_id&#39;:402
+                            }]
+                    },
+                    {
+                        &#39;name&#39;:&#39;indoor_outdoor&#39;,
+                        &#39;id&#39;:303,
+                        &#39;y&#39;:78,
+                        &#39;links&#39;:[]
+                    }
+                ]
+            },
+            {
+                &#39;name&#39;:&#39;reporting.reference_postcode&#39;,
+                &#39;id&#39;:4,
+                &#39;x&#39;: 300,
+                &#39;cols&#39;:[
+                    {
+                        &#39;name&#39;:&#39;region_name&#39;,
+                        &#39;id&#39;:401,
+                        &#39;y&#39;:26,
+                        &#39;links&#39;:[]
+                    },
+                    {
+                        &#39;name&#39;:&#39;county_name&#39;,
+                        &#39;id&#39;:402,
+                        &#39;y&#39;:52,
+                        &#39;links&#39;:[]
+                    }
+                ]
+            }
+        ]
+        &#34;&#34;&#34;
+
+        def create_snapshot():
+            snapshot = []
+
+            row_height = 26
+            width_per_char = 8
+
+            schema_int_buffer = 50
+            schema_buffer = 500
+
+            for schema_sid, schema in self.schemas.items():
+                schema = self.schemas[schema_sid]
+
+                tables_per_column = max(2, schema._num_tables // 2)
+                table_x_buffer = 700
+                table_y_buffer = 50 + (schema._max_num_columns + 1) * row_height
+
+                schema_x = (schema._order - 1) * schema_buffer
+
+                schema_y = 0
+
+                number_of_columns = math.ceil(schema._num_tables / tables_per_column)
+                schema_width = 350 + (number_of_columns - 1) * table_x_buffer
+                schema_height = schema_int_buffer + (tables_per_column) * table_y_buffer
+
+                schema_snapshot = {
+                    &#34;name&#34;: schema.sid,
+                    &#34;id&#34;: schema.nid,
+                    &#34;x&#34;: schema_x,
+                    &#34;y&#34;: schema_y,
+                    &#34;height&#34;: schema_height,
+                    &#34;width&#34;: schema_width,
+                    &#34;color&#34;: &#34;#FFFFFF&#34;,
+                    &#34;tables&#34;: [],
+                }
+
+                for table_sid, table in schema.tables.items():
+                    table_width = table.max_text_length * width_per_char
+
+                    table_snapshot = {
+                        &#34;name&#34;: table.name,
+                        &#34;id&#34;: table.nid,
+                        &#34;order&#34;: table._order,
+                        &#34;height&#34;: (table._num_columns + 1) * row_height,
+                        &#34;width&#34;: table_width,
+                        &#34;x&#34;: schema_int_buffer
+                        + ((table._order - 1) // tables_per_column) * table_x_buffer,
+                        &#34;y&#34;: schema_int_buffer
+                        + ((table._order - 1) % tables_per_column) * table_y_buffer,
+                        &#34;color&#34;: &#34;#FFFFFF&#34;,
+                        &#34;cols&#34;: [],
+                    }
+
+                    column_counter = 1
+                    link_counter = 1
+
+                    for column_sid, column in table.columns.items():
+
+                        column_snapshot = {
+                            &#34;name&#34;: column.name,
+                            &#34;id&#34;: column.nid,
+                            &#34;width&#34;: table_snapshot[&#34;width&#34;],
+                            &#34;height&#34;: row_height,
+                            &#34;y&#34;: column_counter * row_height,
+                            &#34;color&#34;: &#34;#FFFFFF&#34;,
+                            &#34;links&#34;: [],
+                        }
+
+                        for link_nid, link in column.links.items():
+                            link_snapshot = {
+                                &#34;link_id&#34;: link_nid,
+                                &#34;parent_id&#34;: self.get_object(link.source_sid).nid,
+                                &#34;mx&#34;: schema_snapshot[&#34;x&#34;]
+                                + table_snapshot[&#34;x&#34;]
+                                - (300 // table._num_columns) * link_counter,
+                                &#34;my&#34;: schema_snapshot[&#34;y&#34;]
+                                + table_snapshot[&#34;y&#34;]
+                                + column_snapshot[&#34;y&#34;],
+                                &#34;source_sid&#34;: link.source_sid,
+                                &#34;target_sid&#34;: link.target_sid,
+                            }
+                            column_snapshot[&#34;links&#34;].append(link_snapshot)
+                            link_counter += 1
+
+                        table_snapshot[&#34;cols&#34;].append(column_snapshot)
+                        column_counter += 1
+
+                    schema_snapshot[&#34;tables&#34;].append(table_snapshot)
+
+                snapshot.append(schema_snapshot)
+
+            return snapshot
+
+        self.calculate_aggregates()
+        self.snapshot = create_snapshot()
+        self.print_snapshot(how=&#34;raw&#34;)
+        self.print_snapshot(how=&#34;pretty&#34;)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sqlinks.app.Objects.Collection.add_schema"><code class="name flex">
+<span>def <span class="ident">add_schema</span></span>(<span>self, sid: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_schema(self, sid: str):
+    print(sid, self.schemas)
+    if sid in self.schemas:
+        return
+    self.schemas[sid] = Schema(sid=sid)</code></pre>
+</details>
+</dd>
+<dt id="sqlinks.app.Objects.Collection.calculate_aggregates"><code class="name flex">
+<span>def <span class="ident">calculate_aggregates</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calculate_aggregates(self):
+
+    # Calculating these aggregates for both Schema &amp; Table
+    #
+    # self._num_columns = None
+    # self._num_children = None
+    # self._num_parents = None
+    # self._order = None
+    #
+
+    # First we must calculate _num_columns, _num_children, _num_parents
+    # Which then allows _order to be determined
+    for schema_sid, schema in self.schemas.items():
+        schema._num_tables = len(schema.tables)
+        schema._max_num_columns = 0
+
+        for table_sid, table in schema.tables.items():
+            table._num_columns = len(table.columns)
+            if table._num_columns &gt; schema._max_num_columns:
+                schema._max_num_columns = table._num_columns
+
+            for column_sid, column in table.columns.items():
+
+                for link_nid, link in column.links.items():
+                    source_schema, source_table, source_column = deconstruct_sid(
+                        column_sid, how=&#34;column&#34;
+                    )
+                    target_schema, target_table, target_column = deconstruct_sid(
+                        column_sid, how=&#34;column&#34;
+                    )
+
+                    self.schemas[source_schema]._num_children += 1
+                    self.schemas[source_schema].tables[
+                        source_table
+                    ]._num_children += 1
+
+                    self.schemas[target_schema]._num_parents += 1
+                    self.schemas[target_schema].tables[
+                        target_table
+                    ]._num_parents += 1
+
+    # Calculate secondary aggregates
+    for schema_sid, schema in self.schemas.items():
+
+        for table_sid, table in schema.tables.items():
+            table._net_parent = table._num_parents - table._num_children
+
+        schema._net_parent = schema._num_parents - schema._num_children
+
+    # Table ordering
+    for schema_sid, schema in self.schemas.items():
+        sorted_tables = sorted(
+            schema.tables.items(), key=lambda x: x[1]._net_parent, reverse=True
+        )
+
+        for i in range(0, len(sorted_tables)):
+            table_sid = sorted_tables[i][0]
+            schema.tables[table_sid]._order = i + 1
+
+    # Schema ordering
+    sorted_schemas = sorted(
+        self.schemas.items(), key=lambda x: x[1]._net_parent, reverse=True
+    )
+
+    for i in range(0, len(sorted_schemas)):
+        schema_sid = sorted_schemas[i][0]
+        self.schemas[schema_sid]._order = i + 1</code></pre>
+</details>
+</dd>
+<dt id="sqlinks.app.Objects.Collection.create_snapshot"><code class="name flex">
+<span>def <span class="ident">create_snapshot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>snapshot is the desired end state. This is what is used as an input to Jinja to create the
+draw.io diagram.
+snapshot = [
+{
+'name':'stage.reference_rts',
+'id':3,
+'x':900,
+'cols':[
+{
+'name':'region',
+'id':301,
+'y':26,
+'links':[]
+},
+{
+'name':'county',
+'id':302,
+'y':52,
+'links':[{
+'link_id':900,
+'parent_id':402
+}]
+},
+{
+'name':'indoor_outdoor',
+'id':303,
+'y':78,
+'links':[]
+}
+]
+},
+{
+'name':'reporting.reference_postcode',
+'id':4,
+'x': 300,
+'cols':[
+{
+'name':'region_name',
+'id':401,
+'y':26,
+'links':[]
+},
+{
+'name':'county_name',
+'id':402,
+'y':52,
+'links':[]
+}
+]
+}
+]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_snapshot(self):
+    &#34;&#34;&#34;
+    snapshot is the desired end state. This is what is used as an input to Jinja to create the
+    draw.io diagram.
+    snapshot = [
+        {
+            &#39;name&#39;:&#39;stage.reference_rts&#39;,
+            &#39;id&#39;:3,
+            &#39;x&#39;:900,
+            &#39;cols&#39;:[
+                {
+                    &#39;name&#39;:&#39;region&#39;,
+                    &#39;id&#39;:301,
+                    &#39;y&#39;:26,
+                    &#39;links&#39;:[]
+                },
+                {
+                    &#39;name&#39;:&#39;county&#39;,
+                    &#39;id&#39;:302,
+                    &#39;y&#39;:52,
+                    &#39;links&#39;:[{
+                            &#39;link_id&#39;:900,
+                            &#39;parent_id&#39;:402
+                        }]
+                },
+                {
+                    &#39;name&#39;:&#39;indoor_outdoor&#39;,
+                    &#39;id&#39;:303,
+                    &#39;y&#39;:78,
+                    &#39;links&#39;:[]
+                }
+            ]
+        },
+        {
+            &#39;name&#39;:&#39;reporting.reference_postcode&#39;,
+            &#39;id&#39;:4,
+            &#39;x&#39;: 300,
+            &#39;cols&#39;:[
+                {
+                    &#39;name&#39;:&#39;region_name&#39;,
+                    &#39;id&#39;:401,
+                    &#39;y&#39;:26,
+                    &#39;links&#39;:[]
+                },
+                {
+                    &#39;name&#39;:&#39;county_name&#39;,
+                    &#39;id&#39;:402,
+                    &#39;y&#39;:52,
+                    &#39;links&#39;:[]
+                }
+            ]
+        }
+    ]
+    &#34;&#34;&#34;
+
+    def create_snapshot():
+        snapshot = []
+
+        row_height = 26
+        width_per_char = 8
+
+        schema_int_buffer = 50
+        schema_buffer = 500
+
+        for schema_sid, schema in self.schemas.items():
+            schema = self.schemas[schema_sid]
+
+            tables_per_column = max(2, schema._num_tables // 2)
+            table_x_buffer = 700
+            table_y_buffer = 50 + (schema._max_num_columns + 1) * row_height
+
+            schema_x = (schema._order - 1) * schema_buffer
+
+            schema_y = 0
+
+            number_of_columns = math.ceil(schema._num_tables / tables_per_column)
+            schema_width = 350 + (number_of_columns - 1) * table_x_buffer
+            schema_height = schema_int_buffer + (tables_per_column) * table_y_buffer
+
+            schema_snapshot = {
+                &#34;name&#34;: schema.sid,
+                &#34;id&#34;: schema.nid,
+                &#34;x&#34;: schema_x,
+                &#34;y&#34;: schema_y,
+                &#34;height&#34;: schema_height,
+                &#34;width&#34;: schema_width,
+                &#34;color&#34;: &#34;#FFFFFF&#34;,
+                &#34;tables&#34;: [],
+            }
+
+            for table_sid, table in schema.tables.items():
+                table_width = table.max_text_length * width_per_char
+
+                table_snapshot = {
+                    &#34;name&#34;: table.name,
+                    &#34;id&#34;: table.nid,
+                    &#34;order&#34;: table._order,
+                    &#34;height&#34;: (table._num_columns + 1) * row_height,
+                    &#34;width&#34;: table_width,
+                    &#34;x&#34;: schema_int_buffer
+                    + ((table._order - 1) // tables_per_column) * table_x_buffer,
+                    &#34;y&#34;: schema_int_buffer
+                    + ((table._order - 1) % tables_per_column) * table_y_buffer,
+                    &#34;color&#34;: &#34;#FFFFFF&#34;,
+                    &#34;cols&#34;: [],
+                }
+
+                column_counter = 1
+                link_counter = 1
+
+                for column_sid, column in table.columns.items():
+
+                    column_snapshot = {
+                        &#34;name&#34;: column.name,
+                        &#34;id&#34;: column.nid,
+                        &#34;width&#34;: table_snapshot[&#34;width&#34;],
+                        &#34;height&#34;: row_height,
+                        &#34;y&#34;: column_counter * row_height,
+                        &#34;color&#34;: &#34;#FFFFFF&#34;,
+                        &#34;links&#34;: [],
+                    }
+
+                    for link_nid, link in column.links.items():
+                        link_snapshot = {
+                            &#34;link_id&#34;: link_nid,
+                            &#34;parent_id&#34;: self.get_object(link.source_sid).nid,
+                            &#34;mx&#34;: schema_snapshot[&#34;x&#34;]
+                            + table_snapshot[&#34;x&#34;]
+                            - (300 // table._num_columns) * link_counter,
+                            &#34;my&#34;: schema_snapshot[&#34;y&#34;]
+                            + table_snapshot[&#34;y&#34;]
+                            + column_snapshot[&#34;y&#34;],
+                            &#34;source_sid&#34;: link.source_sid,
+                            &#34;target_sid&#34;: link.target_sid,
+                        }
+                        column_snapshot[&#34;links&#34;].append(link_snapshot)
+                        link_counter += 1
+
+                    table_snapshot[&#34;cols&#34;].append(column_snapshot)
+                    column_counter += 1
+
+                schema_snapshot[&#34;tables&#34;].append(table_snapshot)
+
+            snapshot.append(schema_snapshot)
+
+        return snapshot
+
+    self.calculate_aggregates()
+    self.snapshot = create_snapshot()
+    self.print_snapshot(how=&#34;raw&#34;)
+    self.print_snapshot(how=&#34;pretty&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sqlinks.app.Objects.Collection.get_object"><code class="name flex">
+<span>def <span class="ident">get_object</span></span>(<span>self, sid: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_object(self, sid: str):
+    dot_count = sid.count(&#34;.&#34;)
+
+    if dot_count == 0:
+        try:
+            object = self.schemas[sid]
+        except:
+            return None
+
+    elif dot_count == 1:
+        schema, table = deconstruct_sid(sid, how=&#34;table&#34;)
+        try:
+            object = self.schemas[schema].tables[table]
+        except:
+            return None
+
+    elif dot_count == 2:
+        schema, table, column = deconstruct_sid(sid, how=&#34;column&#34;)
+        try:
+            object = self.schemas[schema].tables[table].columns[column]
+        except:
+            return None
+
+    return object</code></pre>
+</details>
+</dd>
+<dt id="sqlinks.app.Objects.Collection.print_snapshot"><code class="name flex">
+<span>def <span class="ident">print_snapshot</span></span>(<span>self, how='pretty')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_snapshot(self, how=&#34;pretty&#34;):
+    def pretty_print_snapshot(snapshot=self.snapshot):
+
+        line_breaks = 3
+        schema_offset = 2
+        table_offset = 3
+        whole_line = 100
+        column_width = (whole_line - table_offset) // 2
+
+        def print_line(type=None, text=&#34;&#34;, source_sid=None, target_sid=None):
+
+            if type == &#34;schema&#34;:
+                print(&#34;\n&#34; * line_breaks)
+                print(&#34; &#34; * schema_offset + &#34;#&#34; * whole_line)
+                buffer = 3
+                offset = len(text) // 2
+                print(&#34; &#34; * schema_offset + &#34; &#34; * (column_width - offset) + text)
+                print(&#34; &#34; * schema_offset + &#34;#&#34; * whole_line)
+
+            elif type == &#34;table&#34;:
+                print()
+                print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+                offset = len(text) // 2
+                print(
+                    &#34; &#34; * table_offset
+                    + &#34;|&#34;
+                    + &#34; &#34; * (column_width - offset)
+                    + text
+                    + &#34; &#34; * (column_width - (len(text) - offset))
+                    + &#34;|&#34;
+                )
+                print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+
+            elif type == &#34;link&#34;:
+                print(
+                    &#34; &#34; * table_offset
+                    + &#34;|&#34;
+                    + source_sid
+                    + &#34; &#34; * (column_width - len(source_sid) - 2)
+                    + &#34;-&gt;&#34;
+                    + &#34; &#34; * (column_width - len(target_sid))
+                    + target_sid
+                    + &#34;|&#34;
+                )
+                print(&#34; &#34; * table_offset + &#34;+&#34; + &#34;-&#34; * column_width * 2 + &#34;+&#34;)
+
+        for schema in snapshot:
+            schema_sid = schema[&#34;name&#34;]
+            print_line(type=&#34;schema&#34;, text=schema_sid)
+
+            for table in schema[&#34;tables&#34;]:
+                table_sid = table[&#34;name&#34;]
+                print_line(type=&#34;table&#34;, text=table_sid)
+
+                for column in table[&#34;cols&#34;]:
+                    column_sid = column[&#34;name&#34;]
+
+                    links = column[&#34;links&#34;]
+
+                    if links == []:
+                        print_line(
+                            type=&#34;link&#34;, source_sid=&#34;&#34;, target_sid=column_sid
+                        )
+
+                    else:
+                        for link in links:
+                            print_line(
+                                type=&#34;link&#34;,
+                                source_sid=link[&#34;source_sid&#34;],
+                                target_sid=link[&#34;target_sid&#34;],
+                            )
+
+        print(&#34;\n&#34; * line_breaks)
+
+    if how == &#34;raw&#34;:
+        pprint.pprint(self.snapshot)
+    elif how == &#34;pretty&#34;:
+        pretty_print_snapshot()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sqlinks.app.Objects.Column"><code class="flex name class">
+<span>class <span class="ident">Column</span></span>
+<span>(</span><span>sid: str, table_sid: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Column(Object):
+    def __init__(self, sid: str, table_sid: str):
+        Object.__init__(self, sid)
+        self.table_sid = table_sid
+        self.name = sid.split(&#34;.&#34;)[2]
+
+        # Links are associated by the target column
+        self.links = {}
+
+    def add_link(self, source_col_sid: int, target_col_sid: int):
+        new_link = Link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
+        self.links[new_link.nid] = new_link</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sqlinks.app.Objects.Object" href="#sqlinks.app.Objects.Object">Object</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sqlinks.app.Objects.Column.add_link"><code class="name flex">
+<span>def <span class="ident">add_link</span></span>(<span>self, source_col_sid: int, target_col_sid: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_link(self, source_col_sid: int, target_col_sid: int):
+    new_link = Link(source_col_sid=source_col_sid, target_col_sid=target_col_sid)
+    self.links[new_link.nid] = new_link</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sqlinks.app.Objects.Link"><code class="flex name class">
+<span>class <span class="ident">Link</span></span>
+<span>(</span><span>source_col_sid: str, target_col_sid: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Link(Object):
+    def __init__(self, source_col_sid: str, target_col_sid: str):
+        Object.__init__(self, sid=None)
+        self.source_sid = source_col_sid
+        self.target_sid = target_col_sid</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sqlinks.app.Objects.Object" href="#sqlinks.app.Objects.Object">Object</a></li>
+</ul>
+</dd>
+<dt id="sqlinks.app.Objects.Object"><code class="flex name class">
+<span>class <span class="ident">Object</span></span>
+<span>(</span><span>sid)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Object:
+    object_counter = 1000
+
+    def __init__(self, sid):
+        # String ID
+        self.sid = sid
+        # Numerical ID
+        self.nid = Object.object_counter
+        Object.object_counter += 1</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sqlinks.app.Objects.Column" href="#sqlinks.app.Objects.Column">Column</a></li>
+<li><a title="sqlinks.app.Objects.Link" href="#sqlinks.app.Objects.Link">Link</a></li>
+<li><a title="sqlinks.app.Objects.Schema" href="#sqlinks.app.Objects.Schema">Schema</a></li>
+<li><a title="sqlinks.app.Objects.Table" href="#sqlinks.app.Objects.Table">Table</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sqlinks.app.Objects.Object.object_counter"><code class="name">var <span class="ident">object_counter</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sqlinks.app.Objects.Schema"><code class="flex name class">
+<span>class <span class="ident">Schema</span></span>
+<span>(</span><span>sid: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Schema(Object):
+    def __init__(self, sid: str):
+        Object.__init__(self, sid)
+        self.name = sid
+        self.tables = {}
+
+        # Aggregates to be calculated later on
+        self._num_tables = 0
+        self._num_children = 0
+        self._num_parents = 0
+        self._order = None
+
+    def add_table(self, sid: str, schema_sid: int):
+        if sid in self.tables:
+            return
+
+        self.tables[sid] = Table(sid=sid, schema_sid=schema_sid)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sqlinks.app.Objects.Object" href="#sqlinks.app.Objects.Object">Object</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sqlinks.app.Objects.Schema.add_table"><code class="name flex">
+<span>def <span class="ident">add_table</span></span>(<span>self, sid: str, schema_sid: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_table(self, sid: str, schema_sid: int):
+    if sid in self.tables:
+        return
+
+    self.tables[sid] = Table(sid=sid, schema_sid=schema_sid)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sqlinks.app.Objects.Table"><code class="flex name class">
+<span>class <span class="ident">Table</span></span>
+<span>(</span><span>sid: str, schema_sid: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Table(Object):
+    def __init__(self, sid: str, schema_sid: str):
+        Object.__init__(self, sid)
+        self.schema_sid = schema_sid
+        self.name = sid.split(&#34;.&#34;)[1]
+        self.max_text_length = len(self.name)
+
+        self.columns = {}
+
+        # Aggregates to be calculated later on
+        self._num_columns = 0
+        self._num_children = 0
+        self._num_parents = 0
+        self._order = None
+
+    def add_column(self, sid: str, table_sid: int):
+        if sid in self.columns:
+            return
+
+        new_column = Column(sid=sid, table_sid=table_sid)
+        self.columns[sid] = new_column
+
+        column_name_len = len(sid.split(&#34;.&#34;)[2])
+        if column_name_len &gt; self.max_text_length:
+            self.max_text_length = column_name_len</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sqlinks.app.Objects.Object" href="#sqlinks.app.Objects.Object">Object</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sqlinks.app.Objects.Table.add_column"><code class="name flex">
+<span>def <span class="ident">add_column</span></span>(<span>self, sid: str, table_sid: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_column(self, sid: str, table_sid: int):
+    if sid in self.columns:
+        return
+
+    new_column = Column(sid=sid, table_sid=table_sid)
+    self.columns[sid] = new_column
+
+    column_name_len = len(sid.split(&#34;.&#34;)[2])
+    if column_name_len &gt; self.max_text_length:
+        self.max_text_length = column_name_len</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sqlinks.app" href="index.html">sqlinks.app</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sqlinks.app.Objects.Collection" href="#sqlinks.app.Objects.Collection">Collection</a></code></h4>
+<ul class="">
+<li><code><a title="sqlinks.app.Objects.Collection.add_schema" href="#sqlinks.app.Objects.Collection.add_schema">add_schema</a></code></li>
+<li><code><a title="sqlinks.app.Objects.Collection.calculate_aggregates" href="#sqlinks.app.Objects.Collection.calculate_aggregates">calculate_aggregates</a></code></li>
+<li><code><a title="sqlinks.app.Objects.Collection.create_snapshot" href="#sqlinks.app.Objects.Collection.create_snapshot">create_snapshot</a></code></li>
+<li><code><a title="sqlinks.app.Objects.Collection.get_object" href="#sqlinks.app.Objects.Collection.get_object">get_object</a></code></li>
+<li><code><a title="sqlinks.app.Objects.Collection.print_snapshot" href="#sqlinks.app.Objects.Collection.print_snapshot">print_snapshot</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sqlinks.app.Objects.Column" href="#sqlinks.app.Objects.Column">Column</a></code></h4>
+<ul class="">
+<li><code><a title="sqlinks.app.Objects.Column.add_link" href="#sqlinks.app.Objects.Column.add_link">add_link</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sqlinks.app.Objects.Link" href="#sqlinks.app.Objects.Link">Link</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sqlinks.app.Objects.Object" href="#sqlinks.app.Objects.Object">Object</a></code></h4>
+<ul class="">
+<li><code><a title="sqlinks.app.Objects.Object.object_counter" href="#sqlinks.app.Objects.Object.object_counter">object_counter</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sqlinks.app.Objects.Schema" href="#sqlinks.app.Objects.Schema">Schema</a></code></h4>
+<ul class="">
+<li><code><a title="sqlinks.app.Objects.Schema.add_table" href="#sqlinks.app.Objects.Schema.add_table">add_table</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sqlinks.app.Objects.Table" href="#sqlinks.app.Objects.Table">Table</a></code></h4>
+<ul class="">
+<li><code><a title="sqlinks.app.Objects.Table.add_column" href="#sqlinks.app.Objects.Table.add_column">add_column</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
