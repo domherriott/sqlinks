@@ -20,6 +20,7 @@
 - [Dev](#dev)
 - [Deflation](#deflation)
   - [](#)
+  - [PyPI](#pypi)
 
 ## Introduction
 
