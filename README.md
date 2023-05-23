@@ -15,6 +15,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Example](#example)
+- [Getting started](#getting-started)
 - [Feedback](#feedback)
 - [Acknowledgments](#acknowledgments)
 - [Dev](#dev)
@@ -40,6 +41,21 @@ To come...
 ## Example
 
 Coming soon...
+
+## Getting started
+
+Install `sqlinks` using `pip`:
+
+```pip install sqlinks```
+
+
+When installed, run `sqlinks` against your current directory using the following:
+
+```python -m sqlinks```
+
+To view all available command line options use:
+
+```python -m sqlinks --help```
 
 
 ## Feedback
