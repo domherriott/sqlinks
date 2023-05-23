@@ -44,12 +44,12 @@ Coming soon...
 
 ## Getting started
 
-Install `sqlinks` using `pip`:
+Install **sqlinks** using **pip**:
 
 ```pip install sqlinks```
 
 
-When installed, run `sqlinks` against your current directory using the following:
+When installed, run **sqlinks** against your current directory using the following:
 
 ```python -m sqlinks```
 
