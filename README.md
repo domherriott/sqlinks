@@ -67,3 +67,7 @@ Build dist files
 
 Push to PyPI
 `python -m twine upload --repository testpypi dist/*`
+
+
+### PyPI
+https://pypi.org/project/sqlinks/0.0.1/
