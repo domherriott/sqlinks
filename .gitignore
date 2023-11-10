@@ -5,4 +5,4 @@ working-files/
 *.pyc
 *.drawio.bkp
 .vscode/
-.venv/
+venv/
