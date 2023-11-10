@@ -84,27 +84,26 @@ if __name__ == "__main__":
     set_logger(args.logging)
 
     working_dir = Path("./working-files/")
-    output_filename = Path(args.output + "/output.drawio")
+    output_filename = Path(args.output + "/output.md")
 
     setup(working_dir=working_dir)
 
     paths = scan.main(args.path)
 
     # Instantiate empty ObjectCollection
-    schemas = Collection()
+    collection = Collection()
 
     for i in range(0, len(paths)):
         path = paths[i]
         print(f"Processing file {i+1} of {len(paths)}: {path['relative_path']}")
-        schemas = parse.main(collection=schemas, path=path["absolute_path"])
+        collection = parse.main(collection=collection, path=path["absolute_path"])
 
-    schemas.create_snapshot()
 
     print("Generating diagram...")
 
     # populate.main(collection=collection)
 
-    draw.main(output_filename=output_filename, collection=schemas)
+    draw.main(output_filename=output_filename, collection=collection)
 
     cleanup(working_dir=working_dir)
 
