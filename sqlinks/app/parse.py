@@ -1,8 +1,6 @@
 import sqlparse
 from sql_metadata import Parser
-
 from sqlinks.app.Objects import Collection
-from sqlinks.app.helpers import deconstruct_sid
 
 
 def parse_statement(parser, collection: Collection, statement, statement_type: str):
@@ -100,7 +98,6 @@ def main(collection: Collection, path):
 
     try:
         with open(path, "r") as f:
-            print(path)
             raw = f.read()
     except:
         print(f"WARNING: Encoding failure {path}")

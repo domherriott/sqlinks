@@ -2,7 +2,6 @@
 from jinja2 import Environment, FileSystemLoader
 import logging
 from pathlib import Path
-import os
 
 
 def gen_drawing(collection):
@@ -51,7 +50,6 @@ def main(collection, output_filename: Path):
         output_filename (Path): _description_
     """
 
-    print(collection)
     output = gen_drawing(collection=collection)
     logging.debug(output_filename)
 
