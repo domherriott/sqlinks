@@ -1,7 +1,7 @@
 <h1 align="center">sqlinks</h1> <br>
 <p align="center">
   <a href="">
-    <img alt="sqlinks" title="sqlinks" src="images/link-logo.png" width="250">
+    <img alt="sqlinks" title="sqlinks" src="meta/link-logo.png" width="250">
   </a>
 </p>
 
