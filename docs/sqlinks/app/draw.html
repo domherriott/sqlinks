@@ -31,10 +31,9 @@
 from jinja2 import Environment, FileSystemLoader
 import logging
 from pathlib import Path
-import os
 
 
-def gen_drawing(snapshot):
+def gen_drawing(collection):
     &#34;&#34;&#34;_summary_
     Args:
         tables (_type_): _description_
@@ -45,9 +44,9 @@ def gen_drawing(snapshot):
     file_loader = FileSystemLoader(Path(__file__).parent / &#34;templates/&#34;)
     env = Environment(loader=file_loader)
 
-    template = env.get_template(&#34;drawio_template.xml&#34;)
+    template = env.get_template(&#34;mermaid_template.md&#34;)
 
-    output = template.render(snapshot=snapshot)
+    output = template.render(collection=collection)
     return output
 
 
@@ -80,7 +79,7 @@ def main(collection, output_filename: Path):
         output_filename (Path): _description_
     &#34;&#34;&#34;
 
-    output = gen_drawing(snapshot=collection.snapshot)
+    output = gen_drawing(collection=collection)
     logging.debug(output_filename)
 
     save_drawing(output, output_filename)</code></pre>
@@ -94,7 +93,7 @@ def main(collection, output_filename: Path):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sqlinks.app.draw.gen_drawing"><code class="name flex">
-<span>def <span class="ident">gen_drawing</span></span>(<span>snapshot)</span>
+<span>def <span class="ident">gen_drawing</span></span>(<span>collection)</span>
 </code></dt>
 <dd>
 <div class="desc"><p><em>summary</em></p>
@@ -112,7 +111,7 @@ def main(collection, output_filename: Path):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def gen_drawing(snapshot):
+<pre><code class="python">def gen_drawing(collection):
     &#34;&#34;&#34;_summary_
     Args:
         tables (_type_): _description_
@@ -123,9 +122,9 @@ def main(collection, output_filename: Path):
     file_loader = FileSystemLoader(Path(__file__).parent / &#34;templates/&#34;)
     env = Environment(loader=file_loader)
 
-    template = env.get_template(&#34;drawio_template.xml&#34;)
+    template = env.get_template(&#34;mermaid_template.md&#34;)
 
-    output = template.render(snapshot=snapshot)
+    output = template.render(collection=collection)
     return output</code></pre>
 </details>
 </dd>
@@ -153,7 +152,7 @@ def main(collection, output_filename: Path):
         output_filename (Path): _description_
     &#34;&#34;&#34;
 
-    output = gen_drawing(snapshot=collection.snapshot)
+    output = gen_drawing(collection=collection)
     logging.debug(output_filename)
 
     save_drawing(output, output_filename)</code></pre>

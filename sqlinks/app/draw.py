@@ -2,10 +2,9 @@
 from jinja2 import Environment, FileSystemLoader
 import logging
 from pathlib import Path
-import os
 
 
-def gen_drawing(snapshot):
+def gen_drawing(collection):
     """_summary_
     Args:
         tables (_type_): _description_
@@ -16,9 +15,9 @@ def gen_drawing(snapshot):
     file_loader = FileSystemLoader(Path(__file__).parent / "templates/")
     env = Environment(loader=file_loader)
 
-    template = env.get_template("drawio_template.xml")
+    template = env.get_template("mermaid_template.md")
 
-    output = template.render(snapshot=snapshot)
+    output = template.render(collection=collection)
     return output
 
 
@@ -51,7 +50,7 @@ def main(collection, output_filename: Path):
         output_filename (Path): _description_
     """
 
-    output = gen_drawing(snapshot=collection.snapshot)
+    output = gen_drawing(collection=collection)
     logging.debug(output_filename)
 
     save_drawing(output, output_filename)

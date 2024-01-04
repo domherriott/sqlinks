@@ -6,7 +6,6 @@ from pathlib import Path
 from sqlinks.app.Objects import Collection
 
 from sqlinks.app import parse as parse
-from sqlinks.app import populate as populate
 from sqlinks.app import draw as draw
 from sqlinks.app import scan as scan
 from sqlinks.app import open as open
@@ -19,9 +18,11 @@ def get_args():
         _type_: _description_
     """
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         "-p", "--path", default=".", help="Path to scan across | Default value = ."
     )
+
     parser.add_argument(
         "-o",
         "--output",
@@ -31,9 +32,16 @@ def get_args():
 
     parser.add_argument(
         "-l",
-        "--logging",
-        default="debug",  # TODO : Update to "error"
+        "--logging_level",
+        default="error",
         help="Set the level of logging messages to receive | Options are [debug, info, warning, error, critical] | Default value = debug",
+    )
+
+    parser.add_argument(
+        "-au",
+        "--auto_open",
+        default="n",
+        help="Set whether the output file should be auto-opened or not after execution | Options are [y, n] | Default value = n",
     )
 
     args = parser.parse_args()
@@ -78,34 +86,54 @@ def cleanup(working_dir: Path):
     os.rmdir(working_dir)
 
 
+def print_args(args):
+    """Print args
+
+    Args:
+        args ():
+    """
+    print("\n")
+    print("------------------")
+    print("Selected settings")
+    print("------------------")
+
+    for key, value in vars(args).items():
+        print(f"{key}: {value}")
+
+    print("\n")
+    return None
+
+
 if __name__ == "__main__":
     args = get_args()
-    print(args)
-    set_logger(args.logging)
+    print_args(args)
+    set_logger(args.logging_level)
 
     working_dir = Path("./working-files/")
-    output_filename = Path(args.output + "/output.drawio")
+    output_filename = Path(args.output + "/output.md")
 
     setup(working_dir=working_dir)
 
     paths = scan.main(args.path)
 
     # Instantiate empty ObjectCollection
-    schemas = Collection()
+    collection = Collection()
 
     for i in range(0, len(paths)):
         path = paths[i]
-        print(f"Processing file {i+1} of {len(paths)}: {path['relative_path']}")
-        schemas = parse.main(collection=schemas, path=path["absolute_path"])
+        print("\n")
+        print(f"-" * 10)
+        print(f"[{i+1}]/[{len(paths)}]")
+        print(f"-" * 10)
+        print(f"File: {path['relative_path']}")
+        collection = parse.main(collection=collection, path=path["absolute_path"])
 
-    schemas.create_snapshot()
+    print("\nGenerating diagram...")
 
-    print("Generating diagram...")
-
-    # populate.main(collection=collection)
-
-    draw.main(output_filename=output_filename, collection=schemas)
+    draw.main(output_filename=output_filename, collection=collection)
 
     cleanup(working_dir=working_dir)
 
-    open.open_drawing(output_filename)
+    # Open the output file if auto_open is selected
+    if args.auto_open == "y":
+        open.open_drawing(output_filename)

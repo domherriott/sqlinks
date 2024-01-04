@@ -26,21 +26,39 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def deconstruct_sid(column_sid, how):
+<pre><code class="python">def deconstruct_sid(sid, how):
     if how == &#34;column&#34;:
-        schema, table = column_sid.split(&#34;.&#34;)[:2]
+        schema, table = sid.split(&#34;.&#34;)[:2]
         schema_sid = schema
         table_sid = &#34;.&#34;.join([schema, table])
+        column_sid = sid
         return schema_sid, table_sid, column_sid
 
     elif how == &#34;table&#34;:
-        schema, table = table_sid.split(&#34;.&#34;)
-        schema_sid = schema
-        table_sid = &#34;.&#34;.join([schema, table])
-        return schema_sid, table_sid
+        # For handling [schema.table] table references
+        if sid.count(&#34;.&#34;) == 1:
+            schema, table = sid.split(&#34;.&#34;)
+            schema_sid = schema
+            table_sid = &#34;.&#34;.join([schema, table])
+            return schema_sid, table_sid
+
+        # For hanlding [db.schema.table] table references
+        elif sid.count(&#34;.&#34;) == 2:
+            db, schema, table = sid.split(&#34;.&#34;)
+            schema_sid = &#34;.&#34;.join([db, schema])
+            table_sid = sid
+            return schema_sid, table_sid
 
     else:
-        raise Exception(&#34;&#39;how&#39; only takes values of &#39;column&#39; or &#39;table&#34;)</code></pre>
+        raise Exception(&#34;&#39;how&#39; only takes values of &#39;column&#39; or &#39;table&#34;)
+
+
+def clean_sid(sid):
+    sid = sid.replace(&#34;[&#34;, &#34;&#34;)
+    sid = sid.replace(&#34;]&#34;, &#34;&#34;)
+    sid = sid.replace(&#34;&#39;&#34;, &#34;&#34;)
+    sid = sid.replace(&#39;&#34;&#39;, &#34;&#34;)
+    return sid</code></pre>
 </details>
 </section>
 <section>
@@ -50,8 +68,8 @@
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="sqlinks.app.helpers.deconstruct_sid"><code class="name flex">
-<span>def <span class="ident">deconstruct_sid</span></span>(<span>column_sid, how)</span>
+<dt id="sqlinks.app.helpers.clean_sid"><code class="name flex">
+<span>def <span class="ident">clean_sid</span></span>(<span>sid)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -59,18 +77,45 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def deconstruct_sid(column_sid, how):
+<pre><code class="python">def clean_sid(sid):
+    sid = sid.replace(&#34;[&#34;, &#34;&#34;)
+    sid = sid.replace(&#34;]&#34;, &#34;&#34;)
+    sid = sid.replace(&#34;&#39;&#34;, &#34;&#34;)
+    sid = sid.replace(&#39;&#34;&#39;, &#34;&#34;)
+    return sid</code></pre>
+</details>
+</dd>
+<dt id="sqlinks.app.helpers.deconstruct_sid"><code class="name flex">
+<span>def <span class="ident">deconstruct_sid</span></span>(<span>sid, how)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deconstruct_sid(sid, how):
     if how == &#34;column&#34;:
-        schema, table = column_sid.split(&#34;.&#34;)[:2]
+        schema, table = sid.split(&#34;.&#34;)[:2]
         schema_sid = schema
         table_sid = &#34;.&#34;.join([schema, table])
+        column_sid = sid
         return schema_sid, table_sid, column_sid
 
     elif how == &#34;table&#34;:
-        schema, table = table_sid.split(&#34;.&#34;)
-        schema_sid = schema
-        table_sid = &#34;.&#34;.join([schema, table])
-        return schema_sid, table_sid
+        # For handling [schema.table] table references
+        if sid.count(&#34;.&#34;) == 1:
+            schema, table = sid.split(&#34;.&#34;)
+            schema_sid = schema
+            table_sid = &#34;.&#34;.join([schema, table])
+            return schema_sid, table_sid
+
+        # For hanlding [db.schema.table] table references
+        elif sid.count(&#34;.&#34;) == 2:
+            db, schema, table = sid.split(&#34;.&#34;)
+            schema_sid = &#34;.&#34;.join([db, schema])
+            table_sid = sid
+            return schema_sid, table_sid
 
     else:
         raise Exception(&#34;&#39;how&#39; only takes values of &#39;column&#39; or &#39;table&#34;)</code></pre>
@@ -94,6 +139,7 @@
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sqlinks.app.helpers.clean_sid" href="#sqlinks.app.helpers.clean_sid">clean_sid</a></code></li>
 <li><code><a title="sqlinks.app.helpers.deconstruct_sid" href="#sqlinks.app.helpers.deconstruct_sid">deconstruct_sid</a></code></li>
 </ul>
 </li>
