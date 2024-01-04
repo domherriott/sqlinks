@@ -41,7 +41,7 @@ def get_args():
         "-au",
         "--auto_open",
         default="n",
-        help="Set whether the output file should be auto-opened or not after execution | Options are [y, n] | Default value = n"
+        help="Set whether the output file should be auto-opened or not after execution | Options are [y, n] | Default value = n",
     )
 
     args = parser.parse_args()
@@ -90,22 +90,21 @@ def print_args(args):
     """Print args
 
     Args:
-        args (): 
+        args ():
     """
-    print('\n')
-    print('------------------')
-    print('Selected settings')
-    print('------------------')
+    print("\n")
+    print("------------------")
+    print("Selected settings")
+    print("------------------")
 
     for key, value in vars(args).items():
         print(f"{key}: {value}")
 
-    print('\n')
+    print("\n")
     return None
 
 
 if __name__ == "__main__":
-
     args = get_args()
     print_args(args)
     set_logger(args.logging_level)
@@ -122,13 +121,12 @@ if __name__ == "__main__":
 
     for i in range(0, len(paths)):
         path = paths[i]
-        print('\n')
-        print(f"-"*10)
-        print(f'[{i+1}]/[{len(paths)}]')
-        print(f"-"*10)
+        print("\n")
+        print(f"-" * 10)
+        print(f"[{i+1}]/[{len(paths)}]")
+        print(f"-" * 10)
         print(f"File: {path['relative_path']}")
         collection = parse.main(collection=collection, path=path["absolute_path"])
-
 
     print("\nGenerating diagram...")
 
@@ -137,6 +135,5 @@ if __name__ == "__main__":
     cleanup(working_dir=working_dir)
 
     # Open the output file if auto_open is selected
-    if args.auto_open == 'y':
+    if args.auto_open == "y":
         open.open_drawing(output_filename)
-
