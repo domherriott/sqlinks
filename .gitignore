@@ -6,3 +6,4 @@ working-files/
 *.drawio.bkp
 .vscode/
 venv/
+/output.md

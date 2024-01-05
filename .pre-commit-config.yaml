@@ -31,3 +31,10 @@ repos:
         name: pdoc
         language: system
         entry: bash -c 'pdoc sqlinks --html -f --output-dir docs'
+
+- repo: local
+  hooks:
+      - id: sqlinks
+        name: sqlinks
+        language: system
+        entry: bash -c 'python3 -m pip install -r requirements.txt && python3 -m sqlinks -p examples -l debug -au no -o examples'
