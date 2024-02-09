@@ -7,7 +7,7 @@ LONG_DESCRIPTION = "Documenting data pipelines is hard. Not only is it complex, 
 # Setting up
 setup(
     name="sqlinks",
-    version='VERSION',
+    version=VERSION,
     author="Dominic Herriott",
     author_email="dominicherriott@outlook.com",
     description=DESCRIPTION,
