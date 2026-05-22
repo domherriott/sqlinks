@@ -40,7 +40,7 @@ To come...
 
 ## Example
 
-Coming soon...
+See "examples" directory.
 
 ## Getting started
 
